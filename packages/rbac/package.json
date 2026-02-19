@@ -1,0 +1,19 @@
+{
+  "name": "@clearpath/rbac",
+  "version": "0.0.1",
+  "private": true,
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "clean": "rm -rf dist node_modules"
+  },
+  "dependencies": {
+    "@clearpath/types": "workspace:*"
+  },
+  "devDependencies": {
+    "@clearpath/typescript-config": "workspace:*",
+    "typescript": "^5.7.0"
+  }
+}

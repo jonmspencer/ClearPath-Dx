@@ -1,0 +1,106 @@
+@import "tailwindcss";
+
+@theme inline {
+  /* ClearPath Dx Brand — calm, clinical, trustworthy */
+  --color-background: oklch(0.98 0.005 250);
+  --color-foreground: oklch(0.15 0.02 260);
+
+  --color-card: oklch(0.99 0.003 250);
+  --color-card-foreground: oklch(0.15 0.02 260);
+
+  --color-popover: oklch(0.99 0.003 250);
+  --color-popover-foreground: oklch(0.15 0.02 260);
+
+  --color-primary: oklch(0.45 0.15 195);
+  --color-primary-foreground: oklch(0.98 0.01 195);
+
+  --color-secondary: oklch(0.93 0.03 195);
+  --color-secondary-foreground: oklch(0.25 0.08 195);
+
+  --color-muted: oklch(0.94 0.02 260);
+  --color-muted-foreground: oklch(0.50 0.02 260);
+
+  --color-accent: oklch(0.93 0.04 155);
+  --color-accent-foreground: oklch(0.25 0.05 155);
+
+  --color-destructive: oklch(0.55 0.18 25);
+  --color-destructive-foreground: oklch(0.98 0.01 25);
+
+  --color-border: oklch(0.88 0.02 250);
+  --color-input: oklch(0.88 0.02 250);
+  --color-ring: oklch(0.45 0.15 195);
+
+  /* Status colors for referral lifecycle */
+  --color-status-received: oklch(0.60 0.14 250);
+  --color-status-in-progress: oklch(0.55 0.15 195);
+  --color-status-scheduled: oklch(0.58 0.14 155);
+  --color-status-completed: oklch(0.55 0.16 145);
+  --color-status-review: oklch(0.68 0.14 80);
+  --color-status-billing: oklch(0.55 0.12 300);
+  --color-status-closed: oklch(0.55 0.04 260);
+
+  /* Sidebar */
+  --color-sidebar: oklch(0.18 0.04 250);
+  --color-sidebar-foreground: oklch(0.90 0.02 250);
+  --color-sidebar-accent: oklch(0.25 0.06 195);
+  --color-sidebar-accent-foreground: oklch(0.95 0.01 195);
+  --color-sidebar-border: oklch(0.25 0.03 250);
+
+  /* Border radius */
+  --radius-sm: 0.375rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.75rem;
+  --radius-xl: 1rem;
+
+  /* Fonts */
+  --font-sans: "Inter", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", monospace;
+}
+
+/* Dark mode */
+@media (prefers-color-scheme: dark) {
+  @theme inline {
+    --color-background: oklch(0.14 0.02 260);
+    --color-foreground: oklch(0.93 0.01 250);
+
+    --color-card: oklch(0.18 0.02 260);
+    --color-card-foreground: oklch(0.93 0.01 250);
+
+    --color-popover: oklch(0.18 0.02 260);
+    --color-popover-foreground: oklch(0.93 0.01 250);
+
+    --color-primary: oklch(0.60 0.15 195);
+    --color-primary-foreground: oklch(0.12 0.02 195);
+
+    --color-secondary: oklch(0.22 0.04 195);
+    --color-secondary-foreground: oklch(0.90 0.02 195);
+
+    --color-muted: oklch(0.22 0.02 260);
+    --color-muted-foreground: oklch(0.65 0.02 260);
+
+    --color-accent: oklch(0.22 0.04 155);
+    --color-accent-foreground: oklch(0.90 0.03 155);
+
+    --color-destructive: oklch(0.60 0.18 25);
+    --color-destructive-foreground: oklch(0.98 0.01 25);
+
+    --color-border: oklch(0.28 0.02 260);
+    --color-input: oklch(0.28 0.02 260);
+    --color-ring: oklch(0.60 0.15 195);
+
+    --color-sidebar: oklch(0.12 0.04 250);
+    --color-sidebar-foreground: oklch(0.90 0.02 250);
+    --color-sidebar-border: oklch(0.22 0.03 250);
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-family: var(--font-sans);
+  }
+}

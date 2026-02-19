@@ -1,0 +1,25 @@
+{
+  "name": "@clearpath/auth",
+  "version": "0.0.1",
+  "private": true,
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "clean": "rm -rf dist node_modules"
+  },
+  "dependencies": {
+    "next-auth": "^5.0.0-beta.25",
+    "@auth/prisma-adapter": "^2.7.0",
+    "@clearpath/database": "workspace:*",
+    "@clearpath/types": "workspace:*",
+    "bcryptjs": "^2.4.3"
+  },
+  "devDependencies": {
+    "@types/bcryptjs": "^2.4.6",
+    "@clearpath/typescript-config": "workspace:*",
+    "typescript": "^5.7.0",
+    "next": "^15.1.0"
+  }
+}

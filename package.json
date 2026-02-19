@@ -1,0 +1,25 @@
+{
+  "name": "clearpath-dx",
+  "private": true,
+  "packageManager": "pnpm@9.15.0",
+  "scripts": {
+    "build": "turbo run build",
+    "dev": "turbo run dev",
+    "dev:platform": "turbo run dev --filter=@clearpath/platform",
+    "dev:web": "turbo run dev --filter=@clearpath/web",
+    "lint": "turbo run lint",
+    "typecheck": "turbo run typecheck",
+    "db:generate": "turbo run db:generate --filter=@clearpath/database",
+    "db:push": "turbo run db:push --filter=@clearpath/database",
+    "db:migrate": "turbo run db:migrate --filter=@clearpath/database",
+    "db:seed": "turbo run db:seed --filter=@clearpath/database",
+    "db:studio": "turbo run db:studio --filter=@clearpath/database",
+    "format": "prettier --write \"**/*.{ts,tsx,js,jsx,md,json,css}\"",
+    "clean": "turbo run clean && rm -rf node_modules"
+  },
+  "devDependencies": {
+    "turbo": "^2.4.0",
+    "prettier": "^3.4.0",
+    "prettier-plugin-tailwindcss": "^0.6.0"
+  }
+}

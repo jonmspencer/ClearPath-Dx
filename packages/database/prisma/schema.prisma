@@ -1,0 +1,778 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ============================================================
+// ENUMS
+// ============================================================
+
+enum OrganizationType {
+  DIAGNOSTICS_OPERATOR
+  ABA_PROVIDER
+  PEDIATRICIAN
+  SCHOOL
+  BILLING_PROVIDER
+}
+
+enum UserRole {
+  SUPER_ADMIN
+  FINANCE_ADMIN
+  ADMIN
+  INTAKE_COORDINATOR
+  SCHEDULER
+  ACCOUNT_MANAGER
+  COMMUNITY_DEVELOPMENT_MANAGER
+  PSYCHOLOGIST
+  PSYCHOMETRIST
+  ABA_PROVIDER_ADMIN
+  ABA_PROVIDER_STAFF
+  PEDIATRICIAN_ADMIN
+  PARENT_GUARDIAN
+}
+
+enum ReferralStatus {
+  RECEIVED
+  INTAKE_IN_PROGRESS
+  PARENT_CONTACTED
+  READY_TO_SCHEDULE
+  INTERVIEW_SCHEDULED
+  INTERVIEW_COMPLETED
+  REPORT_IN_REVIEW
+  REPORT_APPROVED
+  BILLING_SUBMITTED
+  DIAGNOSIS_COMPLETE
+  REPORT_DELIVERED
+  CLOSED
+}
+
+enum ReferralChannel {
+  FAX
+  PHONE
+  PORTAL
+  EMAIL
+  WALK_IN
+}
+
+enum ProviderType {
+  PSYCHOLOGIST
+  PSYCHOMETRIST
+}
+
+enum CasePriority {
+  STANDARD
+  URGENT
+  EXPEDITED
+}
+
+enum InterviewType {
+  PARENT_INTERVIEW
+  CHILD_OBSERVATION
+  SCHOOL_OBSERVATION
+  TESTING_SESSION
+  FEEDBACK_SESSION
+}
+
+enum ReportStatus {
+  DRAFT
+  IN_REVIEW
+  REVISION_REQUESTED
+  APPROVED
+  DELIVERED
+}
+
+enum BillingStatus {
+  PENDING
+  SUBMITTED
+  ACCEPTED
+  REJECTED
+  PAID
+  WRITTEN_OFF
+}
+
+enum PayoutStatus {
+  PENDING
+  APPROVED
+  PAID
+  VOIDED
+}
+
+enum AuditAction {
+  CREATE
+  UPDATE
+  DELETE
+  READ_PHI
+  EXPORT
+  LOGIN
+  LOGOUT
+  PERMISSION_CHANGE
+}
+
+enum FlagSeverity {
+  INFO
+  WARNING
+  URGENT
+  CRITICAL
+}
+
+enum DayOfWeek {
+  MONDAY
+  TUESDAY
+  WEDNESDAY
+  THURSDAY
+  FRIDAY
+  SATURDAY
+  SUNDAY
+}
+
+// ============================================================
+// AUTH.JS REQUIRED MODELS (Prisma Adapter)
+// ============================================================
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String  @map("user_id")
+  type              String
+  provider          String
+  providerAccountId String  @map("provider_account_id")
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@map("accounts")
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique @map("session_token")
+  userId       String   @map("user_id")
+  expires      DateTime
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("sessions")
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+  @@map("verification_tokens")
+}
+
+// ============================================================
+// CORE MODELS
+// ============================================================
+
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  emailVerified DateTime? @map("email_verified")
+  name          String?
+  image         String?
+  phone         String?   /// @PHI
+  passwordHash  String?   @map("password_hash") /// @SENSITIVE
+  isActive      Boolean   @default(true) @map("is_active")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  accounts                Account[]
+  sessions                Session[]
+  organizationMemberships UserOrganization[]
+  providerProfile         ProviderProfile?
+  guardianProfile         Guardian?
+  auditLogs               AuditLog[]         @relation("AuditLogActor")
+  assignedCases           DiagnosticCase[]   @relation("AssignedCoordinator")
+  scheduledCases          DiagnosticCase[]   @relation("AssignedScheduler")
+  managedAccounts         Organization[]     @relation("AccountManager")
+
+  @@map("users")
+}
+
+model Organization {
+  id        String           @id @default(cuid())
+  name      String
+  type      OrganizationType
+  phone     String?          /// @PHI
+  fax       String?          /// @PHI
+  email     String?
+  address   String?          /// @PHI
+  city      String?
+  state     String?
+  zipCode   String?          @map("zip_code")
+  website   String?
+  npiNumber String?          @map("npi_number") /// @SENSITIVE
+  taxId     String?          @map("tax_id") /// @SENSITIVE
+  isActive  Boolean          @default(true) @map("is_active")
+
+  accountManagerId String? @map("account_manager_id")
+  accountManager   User?   @relation("AccountManager", fields: [accountManagerId], references: [id])
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  members            UserOrganization[]
+  referralSources    ReferralSource[]
+  referrals          Referral[]                      @relation("ReferringOrg")
+  clients            Client[]                        @relation("ReferringOrg")
+  providerProfiles   ProviderProfile[]
+  billingRecords     BillingRecord[]
+  schoolContacts     SchoolContact[]
+  pediatricianPrefs  PediatricianContactPreference[]
+  abaWaitlistMetrics ABAWaitlistMetric[]
+
+  @@map("organizations")
+}
+
+model UserOrganization {
+  id             String   @id @default(cuid())
+  userId         String   @map("user_id")
+  organizationId String   @map("organization_id")
+  role           UserRole
+  isPrimary      Boolean  @default(false) @map("is_primary")
+  isActive       Boolean  @default(true) @map("is_active")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  user         User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, organizationId, role])
+  @@map("user_organizations")
+}
+
+// ============================================================
+// REFERRAL PIPELINE
+// ============================================================
+
+model ReferralSource {
+  id             String          @id @default(cuid())
+  organizationId String          @map("organization_id")
+  channel        ReferralChannel
+  identifier     String          /// @PHI - fax number or phone number
+  label          String?
+  isActive       Boolean         @default(true) @map("is_active")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  organization Organization @relation(fields: [organizationId], references: [id])
+  referrals    Referral[]
+
+  @@unique([channel, identifier])
+  @@map("referral_sources")
+}
+
+model Referral {
+  id               String          @id @default(cuid())
+  referralNumber   String          @unique @map("referral_number")
+  status           ReferralStatus  @default(RECEIVED)
+  channel          ReferralChannel
+  referralSourceId String?         @map("referral_source_id")
+  referringOrgId   String          @map("referring_org_id")
+  priority         CasePriority    @default(STANDARD)
+
+  childFirstName   String          @map("child_first_name") /// @PHI
+  childLastName    String          @map("child_last_name") /// @PHI
+  childDateOfBirth DateTime?       @map("child_date_of_birth") /// @PHI
+  childAge         Int?            @map("child_age")
+  reasonForReferral String?        @map("reason_for_referral") @db.Text /// @PHI
+  insuranceInfo    String?         @map("insurance_info") /// @PHI
+  notes            String?         @db.Text /// @PHI
+
+  receivedAt       DateTime        @default(now()) @map("received_at")
+  intakeStartedAt  DateTime?       @map("intake_started_at")
+  parentContactedAt DateTime?      @map("parent_contacted_at")
+  closedAt         DateTime?       @map("closed_at")
+  closedReason     String?         @map("closed_reason")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  referralSource ReferralSource? @relation(fields: [referralSourceId], references: [id])
+  referringOrg   Organization    @relation("ReferringOrg", fields: [referringOrgId], references: [id])
+  client         Client?
+  diagnosticCase DiagnosticCase?
+  statusHistory  ReferralStatusHistory[]
+
+  @@index([status])
+  @@index([referringOrgId])
+  @@index([receivedAt])
+  @@map("referrals")
+}
+
+model ReferralStatusHistory {
+  id         String          @id @default(cuid())
+  referralId String          @map("referral_id")
+  fromStatus ReferralStatus? @map("from_status")
+  toStatus   ReferralStatus  @map("to_status")
+  changedBy  String?         @map("changed_by")
+  note       String?
+  changedAt  DateTime        @default(now()) @map("changed_at")
+
+  referral Referral @relation(fields: [referralId], references: [id], onDelete: Cascade)
+
+  @@index([referralId])
+  @@map("referral_status_history")
+}
+
+// ============================================================
+// CLIENT & GUARDIAN
+// ============================================================
+
+model Client {
+  id             String @id @default(cuid())
+  referralId     String @unique @map("referral_id")
+  referringOrgId String @map("referring_org_id")
+
+  firstName       String   @map("first_name") /// @PHI
+  lastName        String   @map("last_name") /// @PHI
+  dateOfBirth     DateTime @map("date_of_birth") /// @PHI
+  gender          String?  /// @PHI
+  preferredName   String?  @map("preferred_name") /// @PHI
+  primaryLanguage String?  @map("primary_language")
+  schoolName      String?  @map("school_name")
+  grade           String?
+  address         String?  /// @PHI
+  city            String?
+  state           String?
+  zipCode         String?  @map("zip_code")
+
+  insuranceProvider String? @map("insurance_provider") /// @PHI
+  insurancePolicyId String? @map("insurance_policy_id") /// @PHI
+  insuranceGroupId  String? @map("insurance_group_id") /// @PHI
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  referral        Referral               @relation(fields: [referralId], references: [id])
+  referringOrg    Organization           @relation("ReferringOrg", fields: [referringOrgId], references: [id])
+  guardians       Guardian[]
+  diagnosticCases DiagnosticCase[]
+  careFlags       CareCoordinationFlag[]
+
+  @@index([lastName, firstName])
+  @@map("clients")
+}
+
+model Guardian {
+  id           String  @id @default(cuid())
+  clientId     String  @map("client_id")
+  userId       String? @unique @map("user_id")
+
+  firstName    String  @map("first_name") /// @PHI
+  lastName     String  @map("last_name") /// @PHI
+  relationship String
+  email        String? /// @PHI
+  phone        String? /// @PHI
+  isPrimary    Boolean @default(false) @map("is_primary")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  client        Client                @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  user          User?                 @relation(fields: [userId], references: [id])
+  parentSurveys ParentSurveyResponse[]
+
+  @@map("guardians")
+}
+
+// ============================================================
+// DIAGNOSTIC CASE & PROVIDER
+// ============================================================
+
+model DiagnosticCase {
+  id              String       @id @default(cuid())
+  caseNumber      String       @unique @map("case_number")
+  referralId      String       @unique @map("referral_id")
+  clientId        String       @map("client_id")
+  priority        CasePriority @default(STANDARD)
+
+  coordinatorId   String?      @map("coordinator_id")
+  schedulerId     String?      @map("scheduler_id")
+  psychologistId  String?      @map("psychologist_id")
+  psychometristId String?      @map("psychometrist_id")
+
+  targetCompletionDate DateTime? @map("target_completion_date")
+  actualCompletionDate DateTime? @map("actual_completion_date")
+
+  notes String? @db.Text /// @PHI
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  referral       Referral              @relation(fields: [referralId], references: [id])
+  client         Client                @relation(fields: [clientId], references: [id])
+  coordinator    User?                 @relation("AssignedCoordinator", fields: [coordinatorId], references: [id])
+  scheduler      User?                 @relation("AssignedScheduler", fields: [schedulerId], references: [id])
+  psychologist   ProviderProfile?      @relation("CasePsychologist", fields: [psychologistId], references: [id])
+  psychometrist  ProviderProfile?      @relation("CasePsychometrist", fields: [psychometristId], references: [id])
+  interviews     InterviewEvent[]
+  report         DiagnosticReport?
+  billingRecords BillingRecord[]
+  payoutLedger   ProviderPayoutLedger[]
+  careFlags      CareCoordinationFlag[]
+
+  @@index([clientId])
+  @@index([psychologistId])
+  @@index([psychometristId])
+  @@map("diagnostic_cases")
+}
+
+model ProviderProfile {
+  id             String       @id @default(cuid())
+  userId         String       @unique @map("user_id")
+  organizationId String       @map("organization_id")
+  providerType   ProviderType @map("provider_type")
+
+  licenseNumber    String?  @map("license_number") /// @SENSITIVE
+  licenseState     String?  @map("license_state")
+  npiNumber        String?  @map("npi_number") /// @SENSITIVE
+  specialties      String[]
+  yearsExperience  Int?     @map("years_experience")
+  bio              String?  @db.Text
+
+  maxWeeklyCases     Int     @default(5) @map("max_weekly_cases")
+  currentWeeklyCases Int     @default(0) @map("current_weekly_cases")
+  isAcceptingCases   Boolean @default(true) @map("is_accepting_cases")
+
+  serviceRadius   Int?     @map("service_radius")
+  serviceZipCodes String[] @map("service_zip_codes")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  user           User                       @relation(fields: [userId], references: [id])
+  organization   Organization               @relation(fields: [organizationId], references: [id])
+  availability   ProviderAvailability[]
+  casesAsPsych   DiagnosticCase[]           @relation("CasePsychologist")
+  casesAsPsychom DiagnosticCase[]           @relation("CasePsychometrist")
+  interviews     InterviewEvent[]
+  reviewQueue    ReportReviewQueueItem[]
+  reports        DiagnosticReport[]
+  payouts        ProviderPayoutLedger[]
+  incentives     ProviderReferralIncentive[]
+
+  @@map("provider_profiles")
+}
+
+model ProviderAvailability {
+  id           String    @id @default(cuid())
+  providerId   String    @map("provider_id")
+  dayOfWeek    DayOfWeek @map("day_of_week")
+  startTime    String    @map("start_time")
+  endTime      String    @map("end_time")
+  isRecurring  Boolean   @default(true) @map("is_recurring")
+  specificDate DateTime? @map("specific_date")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  provider ProviderProfile @relation(fields: [providerId], references: [id], onDelete: Cascade)
+
+  @@map("provider_availability")
+}
+
+// ============================================================
+// INTERVIEWS & REPORTS
+// ============================================================
+
+model InterviewEvent {
+  id            String        @id @default(cuid())
+  caseId        String        @map("case_id")
+  providerId    String        @map("provider_id")
+  interviewType InterviewType @map("interview_type")
+
+  scheduledStart DateTime  @map("scheduled_start")
+  scheduledEnd   DateTime  @map("scheduled_end")
+  actualStart    DateTime? @map("actual_start")
+  actualEnd      DateTime? @map("actual_end")
+
+  location        String?
+  meetingLink     String?  @map("meeting_link")
+  notes           String?  @db.Text /// @PHI
+  isCompleted     Boolean  @default(false) @map("is_completed")
+  isCancelled     Boolean  @default(false) @map("is_cancelled")
+  cancelledReason String?  @map("cancelled_reason")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  diagnosticCase DiagnosticCase  @relation(fields: [caseId], references: [id])
+  provider       ProviderProfile @relation(fields: [providerId], references: [id])
+
+  @@index([caseId])
+  @@index([providerId])
+  @@index([scheduledStart])
+  @@map("interview_events")
+}
+
+model ReportReviewQueueItem {
+  id          String    @id @default(cuid())
+  reportId    String    @map("report_id")
+  reviewerId  String    @map("reviewer_id")
+  assignedAt  DateTime  @default(now()) @map("assigned_at")
+  completedAt DateTime? @map("completed_at")
+  reviewNotes String?   @db.Text
+  isApproved  Boolean?  @map("is_approved")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  report   DiagnosticReport @relation(fields: [reportId], references: [id])
+  reviewer ProviderProfile  @relation(fields: [reviewerId], references: [id])
+
+  @@map("report_review_queue")
+}
+
+model DiagnosticReport {
+  id     String       @id @default(cuid())
+  caseId String       @unique @map("case_id")
+  authorId String     @map("author_id")
+  status ReportStatus @default(DRAFT)
+
+  reportContent   String?  @map("report_content") @db.Text /// @PHI
+  summary         String?  @db.Text /// @PHI
+  diagnoses       String[] /// @PHI
+  recommendations String?  @db.Text /// @PHI
+
+  fileUrl  String? @map("file_url") /// @PHI
+  fileHash String? @map("file_hash")
+
+  submittedAt DateTime? @map("submitted_at")
+  approvedAt  DateTime? @map("approved_at")
+  deliveredAt DateTime? @map("delivered_at")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  diagnosticCase DiagnosticCase        @relation(fields: [caseId], references: [id])
+  author         ProviderProfile       @relation(fields: [authorId], references: [id])
+  reviewQueue    ReportReviewQueueItem[]
+
+  @@map("diagnostic_reports")
+}
+
+// ============================================================
+// BILLING & PAYOUTS
+// ============================================================
+
+model BillingRecord {
+  id             String        @id @default(cuid())
+  caseId         String        @map("case_id")
+  organizationId String        @map("organization_id")
+  status         BillingStatus @default(PENDING)
+
+  cptCode          String?  @map("cpt_code") /// @FINANCIAL_SENSITIVE
+  billedAmount     Decimal? @map("billed_amount") @db.Decimal(10, 2) /// @FINANCIAL_SENSITIVE
+  allowedAmount    Decimal? @map("allowed_amount") @db.Decimal(10, 2) /// @FINANCIAL_SENSITIVE
+  paidAmount       Decimal? @map("paid_amount") @db.Decimal(10, 2) /// @FINANCIAL_SENSITIVE
+  adjustmentAmount Decimal? @map("adjustment_amount") @db.Decimal(10, 2) /// @FINANCIAL_SENSITIVE
+  payerName        String?  @map("payer_name") /// @FINANCIAL_SENSITIVE
+  claimNumber      String?  @map("claim_number") /// @FINANCIAL_SENSITIVE
+
+  submittedAt DateTime? @map("submitted_at")
+  paidAt      DateTime? @map("paid_at")
+  notes       String?   @db.Text
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  diagnosticCase DiagnosticCase @relation(fields: [caseId], references: [id])
+  organization   Organization   @relation(fields: [organizationId], references: [id])
+
+  @@index([caseId])
+  @@index([status])
+  @@map("billing_records")
+}
+
+model ProviderPayoutLedger {
+  id         String       @id @default(cuid())
+  caseId     String       @map("case_id")
+  providerId String       @map("provider_id")
+  status     PayoutStatus @default(PENDING)
+
+  amount      Decimal   @db.Decimal(10, 2) /// @FINANCIAL_SENSITIVE
+  description String?
+  approvedBy  String?   @map("approved_by")
+  approvedAt  DateTime? @map("approved_at")
+  paidAt      DateTime? @map("paid_at")
+  paymentRef  String?   @map("payment_ref")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  diagnosticCase DiagnosticCase  @relation(fields: [caseId], references: [id])
+  provider       ProviderProfile @relation(fields: [providerId], references: [id])
+
+  @@index([providerId])
+  @@index([status])
+  @@map("provider_payout_ledger")
+}
+
+model ProviderReferralIncentive {
+  id         String @id @default(cuid())
+  providerId String @map("provider_id")
+
+  incentiveType String  @map("incentive_type") /// @FINANCIAL_SENSITIVE
+  amount        Decimal @db.Decimal(10, 2) /// @FINANCIAL_SENSITIVE
+  fundingSource String? @map("funding_source") /// @FINANCIAL_SENSITIVE - NEVER expose
+  description   String?
+  isActive      Boolean @default(true) @map("is_active")
+
+  effectiveFrom DateTime  @map("effective_from")
+  effectiveTo   DateTime? @map("effective_to")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  provider ProviderProfile @relation(fields: [providerId], references: [id])
+
+  @@map("provider_referral_incentives")
+}
+
+// ============================================================
+// COORDINATION & COMMUNICATION
+// ============================================================
+
+model SchoolContact {
+  id             String @id @default(cuid())
+  organizationId String @map("organization_id")
+  name           String /// @PHI
+  title          String?
+  email          String? /// @PHI
+  phone          String? /// @PHI
+  preferredContactMethod String? @map("preferred_contact_method")
+  notes          String? @db.Text
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  organization Organization @relation(fields: [organizationId], references: [id])
+
+  @@map("school_contacts")
+}
+
+model PediatricianContactPreference {
+  id             String @id @default(cuid())
+  organizationId String @map("organization_id")
+
+  prefersFax    Boolean @default(false) @map("prefers_fax")
+  prefersEmail  Boolean @default(false) @map("prefers_email")
+  prefersPortal Boolean @default(false) @map("prefers_portal")
+  prefersPhone  Boolean @default(false) @map("prefers_phone")
+
+  faxNumber    String? @map("fax_number") /// @PHI
+  emailAddress String? @map("email_address") /// @PHI
+  notes        String? @db.Text
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  organization Organization @relation(fields: [organizationId], references: [id])
+
+  @@map("pediatrician_contact_preferences")
+}
+
+model CareCoordinationFlag {
+  id          String       @id @default(cuid())
+  clientId    String?      @map("client_id")
+  caseId      String?      @map("case_id")
+  severity    FlagSeverity
+  title       String
+  description String?      @db.Text /// @PHI
+  isResolved  Boolean      @default(false) @map("is_resolved")
+  resolvedBy  String?      @map("resolved_by")
+  resolvedAt  DateTime?    @map("resolved_at")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  client         Client?         @relation(fields: [clientId], references: [id])
+  diagnosticCase DiagnosticCase? @relation(fields: [caseId], references: [id])
+
+  @@index([severity, isResolved])
+  @@map("care_coordination_flags")
+}
+
+// ============================================================
+// V2 MODELS (schema only, not implemented in Phase 0)
+// ============================================================
+
+model ParentSurveyResponse {
+  id         String   @id @default(cuid())
+  guardianId String   @map("guardian_id")
+
+  surveyType  String  @map("survey_type")
+  responses   Json    /// @PHI
+  submittedAt DateTime @default(now()) @map("submitted_at")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  guardian Guardian @relation(fields: [guardianId], references: [id])
+
+  @@map("parent_survey_responses")
+}
+
+model ABAWaitlistMetric {
+  id             String @id @default(cuid())
+  organizationId String @map("organization_id")
+
+  reportDate    DateTime @map("report_date")
+  waitlistCount Int      @map("waitlist_count")
+  avgWaitDays   Int?     @map("avg_wait_days")
+  capacityTotal Int?     @map("capacity_total")
+  capacityUsed  Int?     @map("capacity_used")
+  notes         String?  @db.Text
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  organization Organization @relation(fields: [organizationId], references: [id])
+
+  @@index([organizationId, reportDate])
+  @@map("aba_waitlist_metrics")
+}
+
+// ============================================================
+// AUDIT LOG
+// ============================================================
+
+model AuditLog {
+  id         String      @id @default(cuid())
+  actorId    String?     @map("actor_id")
+  action     AuditAction
+  resource   String
+  resourceId String?     @map("resource_id")
+  oldValues  Json?       @map("old_values")
+  newValues  Json?       @map("new_values")
+  metadata   Json?
+  ipAddress  String?     @map("ip_address")
+  userAgent  String?     @map("user_agent")
+
+  createdAt DateTime @default(now()) @map("created_at")
+
+  actor User? @relation("AuditLogActor", fields: [actorId], references: [id])
+
+  @@index([actorId])
+  @@index([resource, resourceId])
+  @@index([action])
+  @@index([createdAt])
+  @@map("audit_logs")
+}
