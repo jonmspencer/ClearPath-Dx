@@ -1,17 +1,10 @@
 import { PageContainer } from "@/components/page-container";
-import { Card, CardContent, CardHeader, CardTitle } from "@clearpath/ui/components/card";
+import { SettingsClient } from "./settings-client";
 
 export default function SettingsPage() {
   return (
-    <PageContainer title="Settings">
-      <Card>
-        <CardHeader>
-          <CardTitle>Settings</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <p className="text-muted-foreground">This section is under construction.</p>
-        </CardContent>
-      </Card>
+    <PageContainer title="Settings" description="Manage organization settings and your profile">
+      <SettingsClient />
     </PageContainer>
   );
 }

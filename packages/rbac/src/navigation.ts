@@ -40,6 +40,19 @@ export const NAVIGATION_ITEMS: NavItem[] = [
     ],
   },
   {
+    label: "Cases",
+    href: "/cases",
+    icon: "Briefcase",
+    roles: [
+      UserRole.SUPER_ADMIN, UserRole.ADMIN,
+      UserRole.INTAKE_COORDINATOR, UserRole.SCHEDULER,
+      UserRole.ACCOUNT_MANAGER,
+      UserRole.PSYCHOLOGIST, UserRole.PSYCHOMETRIST,
+      UserRole.ABA_PROVIDER_ADMIN, UserRole.ABA_PROVIDER_STAFF,
+      UserRole.PEDIATRICIAN_ADMIN, UserRole.PARENT_GUARDIAN,
+    ],
+  },
+  {
     label: "Scheduling",
     href: "/scheduling",
     icon: "Calendar",

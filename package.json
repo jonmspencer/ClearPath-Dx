@@ -14,12 +14,18 @@
     "db:migrate": "turbo run db:migrate --filter=@clearpath/database",
     "db:seed": "turbo run db:seed --filter=@clearpath/database",
     "db:studio": "turbo run db:studio --filter=@clearpath/database",
+    "test": "vitest run",
+    "test:watch": "vitest",
     "format": "prettier --write \"**/*.{ts,tsx,js,jsx,md,json,css}\"",
-    "clean": "turbo run clean && rm -rf node_modules"
+    "clean": "turbo run clean && rm -rf node_modules",
+    "test:e2e": "playwright test"
   },
   "devDependencies": {
-    "turbo": "^2.4.0",
+    "@playwright/test": "^1.58.2",
+    "@vitejs/plugin-react": "^5.1.4",
     "prettier": "^3.4.0",
-    "prettier-plugin-tailwindcss": "^0.6.0"
+    "prettier-plugin-tailwindcss": "^0.6.0",
+    "turbo": "^2.4.0",
+    "vitest": "^4.0.18"
   }
 }

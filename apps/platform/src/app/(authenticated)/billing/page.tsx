@@ -1,17 +1,10 @@
 import { PageContainer } from "@/components/page-container";
-import { Card, CardContent, CardHeader, CardTitle } from "@clearpath/ui/components/card";
+import { BillingListClient } from "./billing-list-client";
 
 export default function BillingPage() {
   return (
-    <PageContainer title="Billing">
-      <Card>
-        <CardHeader>
-          <CardTitle>Billing</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <p className="text-muted-foreground">This section is under construction.</p>
-        </CardContent>
-      </Card>
+    <PageContainer title="Billing" description="Manage billing records, claims, and payments">
+      <BillingListClient />
     </PageContainer>
   );
 }

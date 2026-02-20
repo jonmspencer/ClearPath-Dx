@@ -1,17 +1,10 @@
 import { PageContainer } from "@/components/page-container";
-import { Card, CardContent, CardHeader, CardTitle } from "@clearpath/ui/components/card";
+import { ReportListClient } from "./report-list-client";
 
 export default function ReportsPage() {
   return (
-    <PageContainer title="Reports">
-      <Card>
-        <CardHeader>
-          <CardTitle>Reports</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <p className="text-muted-foreground">This section is under construction.</p>
-        </CardContent>
-      </Card>
+    <PageContainer title="Reports" description="Manage diagnostic reports and the review workflow">
+      <ReportListClient />
     </PageContainer>
   );
 }
