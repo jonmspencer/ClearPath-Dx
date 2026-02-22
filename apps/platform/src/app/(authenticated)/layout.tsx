@@ -8,7 +8,7 @@ export default async function AuthenticatedLayout({
   children: React.ReactNode;
 }) {
   const session = await auth();
-  if (!session) redirect("/auth/login");
+  if (!session?.user) redirect("/auth/login");
 
   return <AppShell session={session}>{children}</AppShell>;
 }
