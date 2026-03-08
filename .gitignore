@@ -19,6 +19,7 @@ dist/
 
 # Prisma
 packages/database/prisma/migrations/
+.prisma/
 
 # IDE
 .vscode/

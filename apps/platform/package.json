@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev --port 3001 --turbopack",
-    "build": "prisma generate --schema=../../packages/database/prisma/schema.prisma && next build",
+    "build": "prisma generate --schema=../../packages/database/prisma/schema.prisma && node scripts/copy-prisma-engine.mjs && next build",
     "start": "next start --port 3001",
     "lint": "next lint",
     "typecheck": "tsc --noEmit",
@@ -17,6 +17,7 @@
     "@clearpath/types": "workspace:*",
     "@clearpath/ui": "workspace:*",
     "@hookform/resolvers": "^5.2.2",
+    "@prisma/client": "^6.3.0",
     "@tanstack/react-table": "^8.21.3",
     "bcryptjs": "^2.4.3",
     "date-fns": "^4.1.0",
