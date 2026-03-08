@@ -34,7 +34,7 @@ export async function POST(request: NextRequest) {
     const role = data.providerType === "PSYCHOLOGIST" ? "PSYCHOLOGIST" : "PSYCHOMETRIST";
 
     // Create user + org membership + provider profile in a transaction
-    const result = await prisma.$transaction(async (tx) => {
+    const result = await prisma.$transaction(async (tx: any) => {
       const user = await tx.user.create({
         data: {
           email: data.email,
