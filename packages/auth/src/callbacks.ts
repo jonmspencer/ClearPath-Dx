@@ -22,14 +22,14 @@ export async function jwtCallback({ token, user, trigger, session }: JWTCallback
       include: { organization: { select: { id: true, type: true } } },
     });
 
-    t.roles = memberships.map((m) => ({
+    t.roles = memberships.map((m: any) => ({
       role: m.role as UserRole,
       organizationId: m.organizationId,
       organizationType: m.organization.type as OrganizationType,
     }));
 
     // Set active role to primary membership (or first available)
-    const primary = memberships.find((m) => m.isPrimary) ?? memberships[0];
+    const primary = memberships.find((m: any) => m.isPrimary) ?? memberships[0];
     if (primary) {
       t.activeRole = primary.role as UserRole;
       t.activeOrganizationId = primary.organizationId;

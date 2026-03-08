@@ -1,14 +1,27 @@
 "use client";
 
-import { useState } from "react";
+import { useState, Suspense } from "react";
 import { signIn } from "next-auth/react";
 import { useSearchParams } from "next/navigation";
+import { Loader2 } from "lucide-react";
 import { Button } from "@clearpath/ui/components/button";
 import { Input } from "@clearpath/ui/components/input";
 import { Label } from "@clearpath/ui/components/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@clearpath/ui/components/card";
 
 export default function OTPPage() {
+  return (
+    <Suspense fallback={
+      <div className="flex min-h-screen items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+      </div>
+    }>
+      <OTPForm />
+    </Suspense>
+  );
+}
+
+function OTPForm() {
   const searchParams = useSearchParams();
   const phone = searchParams.get("phone") ?? "";
   const callbackUrl = searchParams.get("callbackUrl") ?? "/dashboard";

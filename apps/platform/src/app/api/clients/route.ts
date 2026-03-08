@@ -87,7 +87,7 @@ export async function POST(request: NextRequest) {
         referringOrgId: clientData.referringOrgId,
         guardians: guardians?.length
           ? {
-              create: guardians.map((g) => ({
+              create: guardians.map((g: any) => ({
                 firstName: g.firstName,
                 lastName: g.lastName,
                 relationship: g.relationship,
