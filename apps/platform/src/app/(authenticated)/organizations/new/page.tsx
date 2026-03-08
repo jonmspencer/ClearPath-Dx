@@ -5,7 +5,7 @@ import { OrgForm } from "./org-form";
 export default async function NewOrganizationPage() {
   const accountManagers = await prisma.user.findMany({
     where: {
-      userOrganizations: {
+      organizationMemberships: {
         some: { role: "ACCOUNT_MANAGER", isActive: true },
       },
     },

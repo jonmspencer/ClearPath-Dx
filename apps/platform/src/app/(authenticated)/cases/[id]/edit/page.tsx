@@ -27,7 +27,7 @@ export default async function EditCasePage({
       orderBy: { name: "asc" },
     }),
     prisma.providerProfile.findMany({
-      where: { isActive: true },
+      where: { isAcceptingCases: true },
       select: {
         id: true,
         user: { select: { name: true } },

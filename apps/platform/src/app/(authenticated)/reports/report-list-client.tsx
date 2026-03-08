@@ -19,7 +19,7 @@ const STATUS_TABS = [
   { value: "DELIVERED", label: "Delivered" },
 ];
 
-export function ReportListClient() {
+export function ReportListClient({ canCreate = false }: { canCreate?: boolean }) {
   const [data, setData] = useState<ReportRow[]>([]);
   const [pageCount, setPageCount] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
@@ -57,7 +57,9 @@ export function ReportListClient() {
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <Input placeholder="Search reports..." value={search} onChange={(e) => { setSearch(e.target.value); setPagination((p) => ({ ...p, pageIndex: 0 })); }} className="w-[250px] pl-9" />
         </div>
-        <Button asChild><Link href="/reports/new"><Plus className="mr-2 h-4 w-4" /> New Report</Link></Button>
+        {canCreate && (
+          <Button asChild><Link href="/reports/new"><Plus className="mr-2 h-4 w-4" /> New Report</Link></Button>
+        )}
       </div>
       <Tabs value={statusFilter} onValueChange={(v) => { setStatusFilter(v); setPagination((p) => ({ ...p, pageIndex: 0 })); }}>
         <TabsList>{STATUS_TABS.map((tab) => <TabsTrigger key={tab.value} value={tab.value}>{tab.label}</TabsTrigger>)}</TabsList>

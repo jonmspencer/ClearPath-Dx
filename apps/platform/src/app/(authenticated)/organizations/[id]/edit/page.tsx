@@ -12,7 +12,7 @@ export default async function EditOrganizationPage({ params }: { params: Promise
     }),
     prisma.user.findMany({
       where: {
-        userOrganizations: {
+        organizationMemberships: {
           some: { role: "ACCOUNT_MANAGER", isActive: true },
         },
       },

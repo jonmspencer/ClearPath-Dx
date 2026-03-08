@@ -216,7 +216,7 @@ export function CaseDetailClient({ diagnosticCase }: CaseDetailProps) {
                   <p className="text-sm font-medium">Billing</p>
                   <StatusBadge status={record.status} type="billing" />
                   <span className="text-sm text-muted-foreground">
-                    ${record.amountBilled?.toFixed(2) ?? "0.00"}
+                    ${record.billedAmount != null ? Number(record.billedAmount).toFixed(2) : "0.00"}
                   </span>
                 </div>
               </div>

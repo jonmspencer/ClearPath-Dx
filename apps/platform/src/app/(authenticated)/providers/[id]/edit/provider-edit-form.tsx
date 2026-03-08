@@ -9,12 +9,13 @@ import { Input } from "@clearpath/ui/components/input";
 import { Textarea } from "@clearpath/ui/components/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@clearpath/ui/components/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@clearpath/ui/components/select";
+import { Switch } from "@clearpath/ui/components/switch";
 import { FormField } from "@/components/form-field";
 import { updateProviderSchema, type UpdateProviderInput } from "@/lib/validations/provider";
 
 export function ProviderEditForm({ provider }: { provider: any }) {
   const router = useRouter();
-  const { register, handleSubmit, setValue, formState: { errors, isSubmitting } } = useForm<UpdateProviderInput>({
+  const { register, handleSubmit, setValue, watch, formState: { errors, isSubmitting } } = useForm<UpdateProviderInput>({
     resolver: zodResolver(updateProviderSchema),
     defaultValues: {
       providerType: provider.providerType,
@@ -85,13 +86,15 @@ export function ProviderEditForm({ provider }: { provider: any }) {
               <Input id="maxWeeklyCases" type="number" {...register("maxWeeklyCases")} />
             </FormField>
             <FormField label="Accepting Cases" error={errors.isAcceptingCases}>
-              <Select defaultValue={String(provider.isAcceptingCases)} onValueChange={(v) => setValue("isAcceptingCases", v === "true")}>
-                <SelectTrigger><SelectValue /></SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="true">Yes</SelectItem>
-                  <SelectItem value="false">No</SelectItem>
-                </SelectContent>
-              </Select>
+              <div className="flex items-center gap-2">
+                <Switch
+                  checked={watch("isAcceptingCases")}
+                  onCheckedChange={(checked) => setValue("isAcceptingCases", checked === true)}
+                />
+                <span className="text-sm text-muted-foreground">
+                  {watch("isAcceptingCases") ? "Yes" : "No"}
+                </span>
+              </div>
             </FormField>
           </CardContent>
         </Card>

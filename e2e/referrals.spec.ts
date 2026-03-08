@@ -1,15 +1,6 @@
 import { test, expect } from "@playwright/test";
 
 test.describe("Referrals", () => {
-  test.beforeEach(async ({ page }) => {
-    // Login as admin first
-    await page.goto("/auth/login");
-    await page.getByLabel(/email/i).fill("admin@clearpathdx.com");
-    await page.getByLabel(/password/i).fill("password123");
-    await page.getByRole("button", { name: /sign in/i }).click();
-    await page.waitForURL(/.*dashboard/, { timeout: 15000 });
-  });
-
   test("should display referrals list page", async ({ page }) => {
     await page.goto("/referrals");
     await expect(page.getByRole("heading", { name: /referrals/i })).toBeVisible();

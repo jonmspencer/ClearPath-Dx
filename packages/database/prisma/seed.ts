@@ -1158,13 +1158,15 @@ async function main() {
 
   console.log("\n✅ Seed complete!\n");
   console.log("Test accounts (password: password123):");
-  console.log("  Super Admin:  super.admin@clearpathdx.com");
-  console.log("  Admin:        admin@clearpathdx.com");
-  console.log("  Intake:       intake@clearpathdx.com");
-  console.log("  Scheduler:    scheduler@clearpathdx.com");
-  console.log("  Psychologist: dr.psych@clearpathdx.com");
-  console.log("  ABA Admin:    aba.admin@brightfutures.com");
-  console.log("  Parent:       parent@example.com");
+  console.log("  Super Admin:    super.admin@clearpathdx.com");
+  console.log("  Admin:          admin@clearpathdx.com");
+  console.log("  Finance Admin:  finance@clearpathdx.com");
+  console.log("  Intake:         intake@clearpathdx.com");
+  console.log("  Scheduler:      scheduler@clearpathdx.com");
+  console.log("  Psychologist:   dr.psych@clearpathdx.com");
+  console.log("  Psychometrist:  psychometrist@clearpathdx.com");
+  console.log("  ABA Admin:      aba.admin@brightfutures.com");
+  console.log("  Parent:         parent@example.com");
 }
 
 main()

@@ -1,10 +1,17 @@
+import { auth } from "@clearpath/auth";
+import { hasPermission } from "@clearpath/rbac";
 import { PageContainer } from "@/components/page-container";
 import { ReportListClient } from "./report-list-client";
 
-export default function ReportsPage() {
+export default async function ReportsPage() {
+  const session = await auth();
+  const canCreate = session?.user
+    ? hasPermission(session.user.activeRole as any, "REPORT:CREATE")
+    : false;
+
   return (
     <PageContainer title="Reports" description="Manage diagnostic reports and the review workflow">
-      <ReportListClient />
+      <ReportListClient canCreate={canCreate} />
     </PageContainer>
   );
 }

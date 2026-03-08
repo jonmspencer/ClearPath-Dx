@@ -20,7 +20,6 @@ export default async function ClientDetailPage({
         select: {
           id: true,
           caseNumber: true,
-          status: true,
           createdAt: true,
         },
         orderBy: { createdAt: "desc" },
@@ -28,9 +27,8 @@ export default async function ClientDetailPage({
       careFlags: {
         select: {
           id: true,
-          flagType: true,
+          title: true,
           severity: true,
-          status: true,
           description: true,
           createdAt: true,
         },

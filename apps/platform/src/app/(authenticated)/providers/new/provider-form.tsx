@@ -9,17 +9,18 @@ import { Input } from "@clearpath/ui/components/input";
 import { Textarea } from "@clearpath/ui/components/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@clearpath/ui/components/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@clearpath/ui/components/select";
+import { Switch } from "@clearpath/ui/components/switch";
 import { FormField } from "@/components/form-field";
 import { createProviderSchema, type CreateProviderInput } from "@/lib/validations/provider";
 
 interface Props {
-  users: { id: string; firstName: string; lastName: string; email: string }[];
+  users: { id: string; name: string | null; email: string }[];
   organizations: { id: string; name: string }[];
 }
 
 export function ProviderForm({ users, organizations }: Props) {
   const router = useRouter();
-  const { register, handleSubmit, setValue, formState: { errors, isSubmitting } } = useForm<CreateProviderInput>({
+  const { register, handleSubmit, setValue, watch, formState: { errors, isSubmitting } } = useForm<CreateProviderInput>({
     resolver: zodResolver(createProviderSchema),
     defaultValues: {
       specialties: [],
@@ -47,7 +48,7 @@ export function ProviderForm({ users, organizations }: Props) {
             <FormField label="User" error={errors.userId} required>
               <Select onValueChange={(v) => setValue("userId", v)}>
                 <SelectTrigger><SelectValue placeholder="Select user..." /></SelectTrigger>
-                <SelectContent>{users.map((u) => <SelectItem key={u.id} value={u.id}>{u.firstName} {u.lastName} ({u.email})</SelectItem>)}</SelectContent>
+                <SelectContent>{users.map((u) => <SelectItem key={u.id} value={u.id}>{u.name ?? u.email}</SelectItem>)}</SelectContent>
               </Select>
             </FormField>
             <FormField label="Organization" error={errors.organizationId} required>
@@ -95,13 +96,15 @@ export function ProviderForm({ users, organizations }: Props) {
               <Input id="maxWeeklyCases" type="number" {...register("maxWeeklyCases")} />
             </FormField>
             <FormField label="Accepting Cases" error={errors.isAcceptingCases}>
-              <Select defaultValue="true" onValueChange={(v) => setValue("isAcceptingCases", v === "true")}>
-                <SelectTrigger><SelectValue /></SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="true">Yes</SelectItem>
-                  <SelectItem value="false">No</SelectItem>
-                </SelectContent>
-              </Select>
+              <div className="flex items-center gap-2">
+                <Switch
+                  checked={watch("isAcceptingCases")}
+                  onCheckedChange={(checked) => setValue("isAcceptingCases", checked === true)}
+                />
+                <span className="text-sm text-muted-foreground">
+                  {watch("isAcceptingCases") ? "Yes" : "No"}
+                </span>
+              </div>
             </FormField>
           </CardContent>
         </Card>

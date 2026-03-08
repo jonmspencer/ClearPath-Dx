@@ -10,6 +10,8 @@ import {
 } from "@/lib/api-helpers";
 import { createAuditLog } from "@/lib/audit";
 import { createReportSchema } from "@/lib/validations/report";
+import { SELF_SCOPED_ROLES } from "@clearpath/rbac";
+import { getProviderProfileId, isSelfScoped } from "@/lib/data-scoping";
 
 export async function GET(request: NextRequest) {
   try {
@@ -28,6 +30,23 @@ export async function GET(request: NextRequest) {
         { diagnosticCase: { caseNumber: { contains: search, mode: "insensitive" } } },
         { summary: { contains: search, mode: "insensitive" } },
       ];
+    }
+
+    // Scope reports for self-scoped roles (providers): only their authored reports
+    // or reports belonging to cases assigned to them
+    if (isSelfScoped(session.user.activeRole as any)) {
+      const providerProfileId = await getProviderProfileId(session.user.id);
+      if (providerProfileId) {
+        where.AND = [
+          ...(where.AND || []),
+          {
+            OR: [
+              { authorId: providerProfileId },
+              { diagnosticCase: { OR: [{ psychologistId: providerProfileId }, { psychometristId: providerProfileId }] } },
+            ],
+          },
+        ];
+      }
     }
 
     const [data, total] = await Promise.all([

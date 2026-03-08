@@ -8,16 +8,16 @@ export default async function ProviderDetailPage({ params }: { params: Promise<{
   const provider = await prisma.providerProfile.findUnique({
     where: { id },
     include: {
-      user: { select: { id: true, firstName: true, lastName: true, email: true } },
+      user: { select: { id: true, name: true, email: true } },
       organization: { select: { id: true, name: true } },
       availability: { orderBy: { dayOfWeek: "asc" } },
       casesAsPsych: {
-        select: { id: true, caseNumber: true, status: true, client: { select: { firstName: true, lastName: true } } },
+        select: { id: true, caseNumber: true, client: { select: { firstName: true, lastName: true } } },
         take: 10,
         orderBy: { createdAt: "desc" },
       },
       casesAsPsychom: {
-        select: { id: true, caseNumber: true, status: true, client: { select: { firstName: true, lastName: true } } },
+        select: { id: true, caseNumber: true, client: { select: { firstName: true, lastName: true } } },
         take: 10,
         orderBy: { createdAt: "desc" },
       },
@@ -32,7 +32,7 @@ export default async function ProviderDetailPage({ params }: { params: Promise<{
   });
   if (!provider) notFound();
   return (
-    <PageContainer title={`Provider — ${provider.user.firstName} ${provider.user.lastName}`}>
+    <PageContainer title={`Provider — ${provider.user.name ?? provider.user.email}`}>
       <ProviderDetailClient provider={JSON.parse(JSON.stringify(provider))} />
     </PageContainer>
   );

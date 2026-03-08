@@ -62,7 +62,7 @@ export function ProviderDetailClient({ provider }: { provider: any }) {
         <Card>
           <CardHeader><CardTitle className="text-base">Provider Information</CardTitle></CardHeader>
           <CardContent className="space-y-3">
-            <InfoRow label="Name" value={`${provider.user.firstName} ${provider.user.lastName}`} />
+            <InfoRow label="Name" value={provider.user.name ?? provider.user.email} />
             <InfoRow label="Email" value={provider.user.email} />
             <InfoRow label="Type">
               {(() => {

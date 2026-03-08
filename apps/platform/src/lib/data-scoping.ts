@@ -1,4 +1,5 @@
 import { ORG_SCOPED_ROLES, SELF_SCOPED_ROLES } from "@clearpath/rbac";
+import { prisma } from "@clearpath/database";
 import type { UserRole } from "@clearpath/types";
 
 interface SessionUser {
@@ -76,4 +77,16 @@ export function isOrgScoped(role: UserRole): boolean {
  */
 export function isSelfScoped(role: UserRole): boolean {
   return SELF_SCOPED_ROLES.includes(role as any);
+}
+
+/**
+ * Resolve a user's provider profile ID from their user ID.
+ * Returns null if the user has no provider profile.
+ */
+export async function getProviderProfileId(userId: string): Promise<string | null> {
+  const profile = await prisma.providerProfile.findUnique({
+    where: { userId },
+    select: { id: true },
+  });
+  return profile?.id ?? null;
 }

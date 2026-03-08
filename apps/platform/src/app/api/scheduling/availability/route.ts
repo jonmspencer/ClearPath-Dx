@@ -10,6 +10,7 @@ import {
 } from "@/lib/api-helpers";
 import { createAuditLog } from "@/lib/audit";
 import { createAvailabilitySchema } from "@/lib/validations/scheduling";
+import { getProviderProfileId, isSelfScoped } from "@/lib/data-scoping";
 
 export async function GET(request: NextRequest) {
   try {
@@ -26,6 +27,14 @@ export async function GET(request: NextRequest) {
     if (providerId) where.providerId = providerId;
     if (dayOfWeek !== null && dayOfWeek !== undefined && dayOfWeek !== "") {
       where.dayOfWeek = parseInt(dayOfWeek);
+    }
+
+    // Scope to provider's own availability for self-scoped roles
+    if (isSelfScoped(session.user.activeRole as any)) {
+      const providerProfileId = await getProviderProfileId(session.user.id);
+      if (providerProfileId) {
+        where.providerId = providerProfileId;
+      }
     }
 
     const [data, total] = await Promise.all([
@@ -60,9 +69,19 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const data = createAvailabilitySchema.parse(body);
 
+    // Self-scoped providers can only create their own availability
+    let effectiveProviderId = data.providerId;
+    if (isSelfScoped(session.user.activeRole as any)) {
+      const providerProfileId = await getProviderProfileId(session.user.id);
+      if (!providerProfileId) {
+        return NextResponse.json({ success: false, error: "No provider profile found" }, { status: 400 });
+      }
+      effectiveProviderId = providerProfileId;
+    }
+
     const availability = await prisma.providerAvailability.create({
       data: {
-        providerId: data.providerId,
+        providerId: effectiveProviderId,
         dayOfWeek: data.dayOfWeek,
         startTime: data.startTime,
         endTime: data.endTime,
@@ -84,7 +103,7 @@ export async function POST(request: NextRequest) {
       action: "CREATE",
       resource: "PROVIDER_AVAILABILITY",
       resourceId: availability.id,
-      newValues: { providerId: data.providerId, dayOfWeek: data.dayOfWeek },
+      newValues: { providerId: effectiveProviderId, dayOfWeek: data.dayOfWeek },
     });
 
     return successResponse(availability, "Availability created successfully");

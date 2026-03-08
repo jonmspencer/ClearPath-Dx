@@ -29,8 +29,7 @@ export async function GET(request: NextRequest) {
     if (search) {
       where.user = {
         OR: [
-          { firstName: { contains: search, mode: "insensitive" } },
-          { lastName: { contains: search, mode: "insensitive" } },
+          { name: { contains: search, mode: "insensitive" } },
           { email: { contains: search, mode: "insensitive" } },
         ],
       };
@@ -43,7 +42,7 @@ export async function GET(request: NextRequest) {
         take: pageSize,
         orderBy: { createdAt: "desc" },
         include: {
-          user: { select: { id: true, firstName: true, lastName: true, email: true } },
+          user: { select: { id: true, name: true, email: true } },
           organization: { select: { id: true, name: true } },
         },
       }),

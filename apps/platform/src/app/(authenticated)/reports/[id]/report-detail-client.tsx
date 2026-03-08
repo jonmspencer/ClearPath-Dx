@@ -13,7 +13,19 @@ import { Badge } from "@clearpath/ui/components/badge";
 import { StatusBadge } from "@/components/status-badge";
 import { ConfirmDialog } from "@/components/confirm-dialog";
 
-export function ReportDetailClient({ report }: { report: any }) {
+export function ReportDetailClient({
+  report,
+  isAuthor,
+  canEdit,
+  canApprove,
+  canDelete,
+}: {
+  report: any;
+  isAuthor: boolean;
+  canEdit: boolean;
+  canApprove: boolean;
+  canDelete: boolean;
+}) {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -59,13 +71,15 @@ export function ReportDetailClient({ report }: { report: any }) {
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-2 flex-wrap">
-        <Button variant="outline" asChild>
-          <Link href={`/reports/${report.id}/edit`}><Pencil className="mr-2 h-4 w-4" /> Edit</Link>
-        </Button>
-        {report.status === "DRAFT" && (
+        {canEdit && (
+          <Button variant="outline" asChild>
+            <Link href={`/reports/${report.id}/edit`}><Pencil className="mr-2 h-4 w-4" /> Edit</Link>
+          </Button>
+        )}
+        {isAuthor && report.status === "DRAFT" && (
           <Button onClick={submitForReview} disabled={isSubmitting}><Send className="mr-2 h-4 w-4" /> Submit for Review</Button>
         )}
-        {report.status === "IN_REVIEW" && (
+        {canApprove && report.status === "IN_REVIEW" && (
           <>
             <Button onClick={() => handleApprove(true)} disabled={isSubmitting} className="bg-green-600 hover:bg-green-700">
               <CheckCircle className="mr-2 h-4 w-4" /> Approve
@@ -76,9 +90,11 @@ export function ReportDetailClient({ report }: { report: any }) {
           </>
         )}
         <div className="flex-1" />
-        <ConfirmDialog title="Delete Report" description="This will permanently delete the report." confirmLabel="Delete" variant="destructive" onConfirm={handleDelete}>
-          <Button variant="outline" size="sm" className="text-destructive"><Trash2 className="mr-2 h-4 w-4" /> Delete</Button>
-        </ConfirmDialog>
+        {canDelete && (
+          <ConfirmDialog title="Delete Report" description="This will permanently delete the report." confirmLabel="Delete" variant="destructive" onConfirm={handleDelete}>
+            <Button variant="outline" size="sm" className="text-destructive"><Trash2 className="mr-2 h-4 w-4" /> Delete</Button>
+          </ConfirmDialog>
+        )}
       </div>
 
       <div className="grid gap-6 md:grid-cols-2">

@@ -9,6 +9,7 @@ import {
 } from "@/lib/api-helpers";
 import { createAuditLog } from "@/lib/audit";
 import { updateAvailabilitySchema } from "@/lib/validations/scheduling";
+import { getProviderProfileId, isSelfScoped } from "@/lib/data-scoping";
 
 export async function PATCH(
   request: NextRequest,
@@ -25,6 +26,14 @@ export async function PATCH(
     const existing = await prisma.providerAvailability.findUnique({ where: { id } });
     if (!existing) {
       throw new ApiError("Availability record not found", 404);
+    }
+
+    // Self-scoped providers can only update their own availability
+    if (isSelfScoped(session.user.activeRole as any)) {
+      const providerProfileId = await getProviderProfileId(session.user.id);
+      if (!providerProfileId || existing.providerId !== providerProfileId) {
+        throw new ApiError("Forbidden", 403);
+      }
     }
 
     const availability = await prisma.providerAvailability.update({
@@ -72,6 +81,14 @@ export async function DELETE(
     const existing = await prisma.providerAvailability.findUnique({ where: { id } });
     if (!existing) {
       throw new ApiError("Availability record not found", 404);
+    }
+
+    // Self-scoped providers can only delete their own availability
+    if (isSelfScoped(session.user.activeRole as any)) {
+      const providerProfileId = await getProviderProfileId(session.user.id);
+      if (!providerProfileId || existing.providerId !== providerProfileId) {
+        throw new ApiError("Forbidden", 403);
+      }
     }
 
     await prisma.providerAvailability.delete({ where: { id } });

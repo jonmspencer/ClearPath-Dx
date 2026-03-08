@@ -42,6 +42,18 @@ export async function jwtCallback({ token, user, trigger, session }: JWTCallback
     token.activeOrganizationType = session.activeOrganizationType as OrganizationType;
   }
 
+  // Re-read profile data from DB on any session update (e.g. after profile save)
+  if (trigger === "update" && token.userId) {
+    const freshUser = await prisma.user.findUnique({
+      where: { id: token.userId as string },
+      select: { name: true, email: true },
+    });
+    if (freshUser) {
+      token.name = freshUser.name;
+      token.email = freshUser.email;
+    }
+  }
+
   return token;
 }
 
@@ -54,6 +66,8 @@ export async function sessionCallback({
 }) {
   if (token) {
     session.user.id = token.userId as string;
+    session.user.name = (token.name as string) ?? null;
+    session.user.email = token.email as string;
     session.user.activeRole = token.activeRole as UserRole;
     session.user.activeOrganizationId = token.activeOrganizationId as string;
     session.user.activeOrganizationType = token.activeOrganizationType as OrganizationType;

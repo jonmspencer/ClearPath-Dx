@@ -16,7 +16,7 @@ export type ProviderRow = {
   currentWeeklyCases: number;
   isAcceptingCases: boolean;
   createdAt: string;
-  user: { id: string; firstName: string; lastName: string; email: string };
+  user: { id: string; name: string | null; email: string };
   organization: { id: string; name: string };
 };
 
@@ -31,7 +31,7 @@ export const providerColumns: ColumnDef<ProviderRow>[] = [
     header: "Name",
     cell: ({ row }) => (
       <Link href={`/providers/${row.original.id}`} className="font-medium text-primary hover:underline">
-        {row.original.user.firstName} {row.original.user.lastName}
+        {row.original.user.name ?? row.original.user.email}
       </Link>
     ),
   },

@@ -13,7 +13,7 @@ export default async function OrganizationDetailPage({ params }: { params: Promi
         include: { user: { select: { id: true, name: true, email: true } } },
         orderBy: { isPrimary: "desc" },
       },
-      referralSources: { select: { id: true, name: true, isActive: true } },
+      referralSources: { select: { id: true, label: true, channel: true, identifier: true, isActive: true } },
       _count: { select: { referrals: true, clients: true, billingRecords: true } },
     },
   });

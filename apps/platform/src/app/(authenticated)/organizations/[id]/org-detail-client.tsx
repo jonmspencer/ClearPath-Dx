@@ -279,7 +279,7 @@ export function OrgDetailClient({ organization }: { organization: any }) {
             <div className="space-y-2">
               {organization.referralSources.map((source: any) => (
                 <div key={source.id} className="flex items-center justify-between rounded-md border p-3">
-                  <p className="text-sm font-medium">{source.name}</p>
+                  <p className="text-sm font-medium">{source.label || `${source.channel}: ${source.identifier}`}</p>
                   <Badge variant={source.isActive ? "default" : "secondary"}>
                     {source.isActive ? "Active" : "Inactive"}
                   </Badge>

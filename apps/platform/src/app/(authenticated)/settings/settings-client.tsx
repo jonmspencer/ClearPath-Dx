@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useSearchParams } from "next/navigation";
+import { useSession } from "next-auth/react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
@@ -15,7 +17,9 @@ import {
 } from "@/lib/validations/settings";
 
 export function SettingsClient() {
-  const [activeTab, setActiveTab] = useState("organization");
+  const searchParams = useSearchParams();
+  const initialTab = searchParams.get("tab") === "profile" ? "profile" : "organization";
+  const [activeTab, setActiveTab] = useState(initialTab);
 
   return (
     <Tabs value={activeTab} onValueChange={setActiveTab}>
@@ -135,6 +139,7 @@ function OrganizationSettings() {
 }
 
 function ProfileSettings() {
+  const { update: updateSession } = useSession();
   const [isLoadingData, setIsLoadingData] = useState(true);
   const [email, setEmail] = useState("");
   const { register, handleSubmit, reset, formState: { errors, isSubmitting } } = useForm<UpdateProfileInput>({
@@ -167,8 +172,10 @@ function ProfileSettings() {
         body: JSON.stringify(data),
       });
       const json = await res.json();
-      if (json.success) { toast.success("Profile updated"); }
-      else toast.error(json.error);
+      if (json.success) {
+        toast.success("Profile updated");
+        await updateSession({});
+      } else toast.error(json.error);
     } catch { toast.error("Failed to update profile"); }
   }
 

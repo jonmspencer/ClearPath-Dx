@@ -26,7 +26,7 @@ const STATUS_TABS = [
 ];
 
 const TYPE_OPTIONS = [
-  { value: "", label: "All Types" },
+  { value: "all", label: "All Types" },
   { value: "PARENT_INTERVIEW", label: "Parent Interview" },
   { value: "CHILD_OBSERVATION", label: "Child Observation" },
   { value: "SCHOOL_OBSERVATION", label: "School Observation" },
@@ -42,7 +42,7 @@ export function SchedulingClient() {
   const [pageCount, setPageCount] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
   const [statusFilter, setStatusFilter] = useState(searchParams.get("status") ?? "");
-  const [typeFilter, setTypeFilter] = useState(searchParams.get("interviewType") ?? "");
+  const [typeFilter, setTypeFilter] = useState(searchParams.get("interviewType") ?? "all");
   const [pagination, setPagination] = useState<PaginationState>({
     pageIndex: parseInt(searchParams.get("page") ?? "1") - 1,
     pageSize: 25,
@@ -54,7 +54,7 @@ export function SchedulingClient() {
     params.set("page", String(pagination.pageIndex + 1));
     params.set("pageSize", String(pagination.pageSize));
     if (statusFilter) params.set("status", statusFilter);
-    if (typeFilter) params.set("interviewType", typeFilter);
+    if (typeFilter && typeFilter !== "all") params.set("interviewType", typeFilter);
 
     try {
       const res = await fetch(`/api/scheduling/interviews?${params}`);

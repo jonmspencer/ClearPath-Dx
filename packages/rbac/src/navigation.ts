@@ -5,6 +5,12 @@ export interface NavItem {
   href: string;
   icon: string; // Lucide icon name (resolved in UI layer)
   roles: UserRole[];
+  group?: string;
+}
+
+export interface NavGroup {
+  label: string;
+  items: NavItem[];
 }
 
 export const NAVIGATION_ITEMS: NavItem[] = [
@@ -18,6 +24,7 @@ export const NAVIGATION_ITEMS: NavItem[] = [
     label: "Referrals",
     href: "/referrals",
     icon: "FileText",
+    group: "Operations",
     roles: [
       UserRole.SUPER_ADMIN, UserRole.ADMIN, UserRole.INTAKE_COORDINATOR,
       UserRole.SCHEDULER, UserRole.ACCOUNT_MANAGER,
@@ -30,6 +37,7 @@ export const NAVIGATION_ITEMS: NavItem[] = [
     label: "Clients",
     href: "/clients",
     icon: "Users",
+    group: "Operations",
     roles: [
       UserRole.SUPER_ADMIN, UserRole.ADMIN,
       UserRole.INTAKE_COORDINATOR, UserRole.SCHEDULER,
@@ -43,6 +51,7 @@ export const NAVIGATION_ITEMS: NavItem[] = [
     label: "Cases",
     href: "/cases",
     icon: "Briefcase",
+    group: "Operations",
     roles: [
       UserRole.SUPER_ADMIN, UserRole.ADMIN,
       UserRole.INTAKE_COORDINATOR, UserRole.SCHEDULER,
@@ -56,6 +65,7 @@ export const NAVIGATION_ITEMS: NavItem[] = [
     label: "Scheduling",
     href: "/scheduling",
     icon: "Calendar",
+    group: "Operations",
     roles: [
       UserRole.SUPER_ADMIN, UserRole.ADMIN, UserRole.SCHEDULER,
       UserRole.PSYCHOLOGIST, UserRole.PSYCHOMETRIST,
@@ -65,6 +75,7 @@ export const NAVIGATION_ITEMS: NavItem[] = [
     label: "Reports",
     href: "/reports",
     icon: "ClipboardCheck",
+    group: "Operations",
     roles: [
       UserRole.SUPER_ADMIN, UserRole.ADMIN,
       UserRole.PSYCHOLOGIST, UserRole.PSYCHOMETRIST,
@@ -76,18 +87,28 @@ export const NAVIGATION_ITEMS: NavItem[] = [
     label: "Billing",
     href: "/billing",
     icon: "DollarSign",
+    group: "Finance",
     roles: [UserRole.SUPER_ADMIN, UserRole.FINANCE_ADMIN, UserRole.ADMIN],
+  },
+  {
+    label: "Payouts",
+    href: "/payouts",
+    icon: "Wallet",
+    group: "Finance",
+    roles: [UserRole.SUPER_ADMIN, UserRole.FINANCE_ADMIN, UserRole.PSYCHOLOGIST, UserRole.PSYCHOMETRIST],
   },
   {
     label: "Providers",
     href: "/providers",
     icon: "Activity",
+    group: "Administration",
     roles: [UserRole.SUPER_ADMIN, UserRole.ADMIN, UserRole.SCHEDULER],
   },
   {
     label: "Organizations",
     href: "/organizations",
     icon: "Building2",
+    group: "Administration",
     roles: [
       UserRole.SUPER_ADMIN, UserRole.ADMIN, UserRole.ACCOUNT_MANAGER,
       UserRole.ABA_PROVIDER_ADMIN, UserRole.PEDIATRICIAN_ADMIN,
@@ -97,24 +118,58 @@ export const NAVIGATION_ITEMS: NavItem[] = [
     label: "Users",
     href: "/users",
     icon: "UserCog",
+    group: "Administration",
     roles: [UserRole.SUPER_ADMIN, UserRole.ADMIN, UserRole.ABA_PROVIDER_ADMIN],
   },
   {
     label: "Audit Log",
     href: "/audit-log",
     icon: "Shield",
+    group: "Administration",
     roles: [UserRole.SUPER_ADMIN, UserRole.ADMIN, UserRole.FINANCE_ADMIN],
   },
   {
     label: "Settings",
     href: "/settings",
     icon: "Settings",
+    group: "Administration",
     roles: [UserRole.SUPER_ADMIN, UserRole.ADMIN],
   },
 ];
 
+const GROUP_ORDER = ["Operations", "Finance", "Administration"];
+
 export function getNavigationForRole(role: UserRole): NavItem[] {
   return NAVIGATION_ITEMS.filter((item) => item.roles.includes(role));
+}
+
+export function getGroupedNavigationForRole(role: UserRole): NavGroup[] {
+  const items = getNavigationForRole(role);
+  const ungrouped = items.filter((item) => !item.group);
+  const grouped = new Map<string, NavItem[]>();
+
+  for (const item of items) {
+    if (item.group) {
+      const existing = grouped.get(item.group) ?? [];
+      existing.push(item);
+      grouped.set(item.group, existing);
+    }
+  }
+
+  const result: NavGroup[] = [];
+
+  if (ungrouped.length > 0) {
+    result.push({ label: "", items: ungrouped });
+  }
+
+  for (const groupName of GROUP_ORDER) {
+    const groupItems = grouped.get(groupName);
+    if (groupItems && groupItems.length > 0) {
+      result.push({ label: groupName, items: groupItems });
+    }
+  }
+
+  return result;
 }
 
 export function getDashboardPath(role: UserRole): string {

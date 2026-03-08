@@ -9,6 +9,7 @@ import {
   successResponse,
 } from "@/lib/api-helpers";
 import { createAuditLog } from "@/lib/audit";
+import { getProviderProfileId, isSelfScoped } from "@/lib/data-scoping";
 import { createInterviewSchema } from "@/lib/validations/scheduling";
 
 export async function GET(request: NextRequest) {
@@ -41,6 +42,14 @@ export async function GET(request: NextRequest) {
       where.isCompleted = false;
       where.isCancelled = false;
       where.scheduledStart = { gte: new Date() };
+    }
+
+    // Scope to provider's own interviews for self-scoped roles
+    if (isSelfScoped(session.user.activeRole as any)) {
+      const providerProfileId = await getProviderProfileId(session.user.id);
+      if (providerProfileId) {
+        where.providerId = providerProfileId;
+      }
     }
 
     const [data, total] = await Promise.all([

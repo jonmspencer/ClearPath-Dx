@@ -8,12 +8,12 @@ export default async function EditProviderPage({ params }: { params: Promise<{ i
   const provider = await prisma.providerProfile.findUnique({
     where: { id },
     include: {
-      user: { select: { firstName: true, lastName: true } },
+      user: { select: { name: true } },
     },
   });
   if (!provider) notFound();
   return (
-    <PageContainer title={`Edit Provider — ${provider.user.firstName} ${provider.user.lastName}`}>
+    <PageContainer title={`Edit Provider — ${provider.user.name ?? "Provider"}`}>
       <ProviderEditForm provider={JSON.parse(JSON.stringify(provider))} />
     </PageContainer>
   );

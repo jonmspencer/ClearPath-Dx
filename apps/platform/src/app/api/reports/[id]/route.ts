@@ -9,6 +9,21 @@ import {
 } from "@/lib/api-helpers";
 import { createAuditLog } from "@/lib/audit";
 import { updateReportSchema } from "@/lib/validations/report";
+import { SELF_SCOPED_ROLES } from "@clearpath/rbac";
+import { getProviderProfileId, isSelfScoped } from "@/lib/data-scoping";
+
+async function verifyReportAccess(
+  report: { authorId: string; diagnosticCase?: { psychologistId?: string | null; psychometristId?: string | null } | null },
+  session: any
+): Promise<boolean> {
+  if (!isSelfScoped(session.user.activeRole as any)) return true;
+  const providerProfileId = await getProviderProfileId(session.user.id);
+  if (!providerProfileId) return false;
+  if (report.authorId === providerProfileId) return true;
+  const dc = report.diagnosticCase;
+  if (dc && (dc.psychologistId === providerProfileId || dc.psychometristId === providerProfileId)) return true;
+  return false;
+}
 
 export async function GET(
   request: NextRequest,
@@ -25,6 +40,7 @@ export async function GET(
         diagnosticCase: {
           select: {
             id: true, caseNumber: true,
+            psychologistId: true, psychometristId: true,
             client: { select: { id: true, firstName: true, lastName: true } },
           },
         },
@@ -37,6 +53,10 @@ export async function GET(
     });
 
     if (!report) throw new ApiError("Report not found", 404);
+
+    const hasAccess = await verifyReportAccess(report, session);
+    if (!hasAccess) throw new ApiError("Report not found", 404);
+
     return successResponse(report);
   } catch (error) {
     return handleApiError(error);
@@ -54,6 +74,13 @@ export async function PATCH(
 
     const existing = await prisma.diagnosticReport.findUnique({ where: { id } });
     if (!existing) throw new ApiError("Report not found", 404);
+
+    if (isSelfScoped(session.user.activeRole as any)) {
+      const providerProfileId = await getProviderProfileId(session.user.id);
+      if (!providerProfileId || existing.authorId !== providerProfileId) {
+        throw new ApiError("Forbidden", 403);
+      }
+    }
 
     const body = await request.json();
     const data = updateReportSchema.parse(body);
@@ -100,6 +127,13 @@ export async function DELETE(
 
     const existing = await prisma.diagnosticReport.findUnique({ where: { id } });
     if (!existing) throw new ApiError("Report not found", 404);
+
+    if (isSelfScoped(session.user.activeRole as any)) {
+      const providerProfileId = await getProviderProfileId(session.user.id);
+      if (!providerProfileId || existing.authorId !== providerProfileId) {
+        throw new ApiError("Forbidden", 403);
+      }
+    }
 
     await prisma.diagnosticReport.delete({ where: { id } });
 

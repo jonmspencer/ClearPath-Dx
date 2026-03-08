@@ -11,6 +11,8 @@ export {
 export {
   NAVIGATION_ITEMS,
   getNavigationForRole,
+  getGroupedNavigationForRole,
   getDashboardPath,
   type NavItem,
+  type NavGroup,
 } from "./navigation";

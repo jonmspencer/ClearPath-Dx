@@ -8,8 +8,8 @@ export default async function NewProviderPage() {
       where: {
         providerProfile: null,
       },
-      select: { id: true, firstName: true, lastName: true, email: true },
-      orderBy: { lastName: "asc" },
+      select: { id: true, name: true, email: true },
+      orderBy: { name: "asc" },
     }),
     prisma.organization.findMany({
       where: { isActive: true },

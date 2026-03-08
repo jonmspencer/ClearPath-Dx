@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { format } from "date-fns";
 import { toast } from "sonner";
-import { Pencil, ArrowRight, Trash2, Plus, UserPlus } from "lucide-react";
+import { Pencil, ArrowRight, Trash2, UserPlus } from "lucide-react";
 import { Button } from "@clearpath/ui/components/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@clearpath/ui/components/card";
 import { Badge } from "@clearpath/ui/components/badge";
@@ -25,7 +25,6 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@clearpath/ui/components/dialog";
-import { StatusBadge } from "@/components/status-badge";
 import { ConfirmDialog } from "@/components/confirm-dialog";
 import { FormField } from "@/components/form-field";
 
@@ -294,7 +293,6 @@ export function ClientDetailClient({ client }: ClientDetailProps) {
                     </p>
                   </div>
                   <div className="flex items-center gap-2">
-                    <StatusBadge status={dc.status} type="case" />
                     <Button variant="ghost" size="sm" asChild>
                       <Link href={`/cases/${dc.id}`}>
                         View <ArrowRight className="ml-1 h-4 w-4" />
@@ -322,7 +320,7 @@ export function ClientDetailClient({ client }: ClientDetailProps) {
                 <div key={flag.id} className="flex items-center justify-between rounded-md border p-3">
                   <div className="space-y-1">
                     <div className="flex items-center gap-2">
-                      <p className="text-sm font-medium">{flag.flagType.replace(/_/g, " ")}</p>
+                      <p className="text-sm font-medium">{flag.title}</p>
                       <Badge
                         variant={
                           flag.severity === "HIGH"
@@ -342,7 +340,9 @@ export function ClientDetailClient({ client }: ClientDetailProps) {
                       {format(new Date(flag.createdAt), "MMM d, yyyy")}
                     </p>
                   </div>
-                  <StatusBadge status={flag.status} type="flag" />
+                  <Badge variant={flag.severity === "CRITICAL" ? "destructive" : "secondary"}>
+                    {flag.severity}
+                  </Badge>
                 </div>
               ))}
             </div>

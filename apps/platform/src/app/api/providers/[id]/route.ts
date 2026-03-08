@@ -15,7 +15,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
     const provider = await prisma.providerProfile.findUnique({
       where: { id },
       include: {
-        user: { select: { id: true, firstName: true, lastName: true, email: true } },
+        user: { select: { id: true, name: true, email: true } },
         organization: { select: { id: true, name: true } },
         availability: { orderBy: { dayOfWeek: "asc" } },
         _count: {
