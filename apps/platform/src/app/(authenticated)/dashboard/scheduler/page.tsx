@@ -43,7 +43,7 @@ export default async function SchedulerDashboardPage() {
         <CardHeader><CardTitle className="text-base">Upcoming Interviews</CardTitle></CardHeader>
         <CardContent>
           <div className="space-y-3">
-            {nextInterviews.map((i) => (
+            {nextInterviews.map((i: any) => (
               <div key={i.id} className="flex items-center justify-between text-sm">
                 <div className="flex items-center gap-3">
                   <Link href={`/scheduling/${i.id}`} className="font-medium text-primary hover:underline">

@@ -30,7 +30,7 @@ export default async function FinanceAdminDashboardPage() {
         <StatCard title="Paid Claims" value={paidBilling} description={`of ${totalBilling} total`} icon={<CheckCircle className="h-5 w-5" />} />
         <StatCard title="Pending Payouts" value={pendingPayouts} description={`${approvedPayouts} approved`} icon={<CreditCard className="h-5 w-5" />} />
       </div>
-      <RecentActivity items={recentActivity.map((a) => ({
+      <RecentActivity items={recentActivity.map((a: any) => ({
         id: a.id, action: a.action, resource: a.resource,
         resourceId: a.resourceId, actorName: a.actor?.name ?? null, createdAt: a.createdAt.toISOString(),
       }))} />

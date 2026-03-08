@@ -35,7 +35,7 @@ export default async function AdminDashboardPage() {
         <StatCard title="Organizations" value={totalOrgs} icon={<Building2 className="h-5 w-5" />} />
         <StatCard title="Pending Referrals" value={pendingReferrals} icon={<FileText className="h-5 w-5" />} />
       </div>
-      <RecentActivity items={recentActivity.map((a) => ({
+      <RecentActivity items={recentActivity.map((a: any) => ({
         id: a.id, action: a.action, resource: a.resource,
         resourceId: a.resourceId, actorName: a.actor?.name ?? null, createdAt: a.createdAt.toISOString(),
       }))} />

@@ -33,7 +33,7 @@ export default async function IntakeCoordinatorDashboardPage() {
         <CardHeader><CardTitle className="text-base">Recent Referrals</CardTitle></CardHeader>
         <CardContent>
           <div className="space-y-3">
-            {recentReferrals.map((r) => (
+            {recentReferrals.map((r: any) => (
               <div key={r.id} className="flex items-center justify-between text-sm">
                 <div className="flex items-center gap-3">
                   <Link href={`/referrals/${r.id}`} className="font-medium text-primary hover:underline">{r.referralNumber}</Link>
