@@ -24,6 +24,8 @@ interface ReferralFormProps {
 
 export function ReferralForm({ organizations }: ReferralFormProps) {
   const router = useRouter();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const resolver = zodResolver(createReferralSchema) as any;
   const {
     register,
     handleSubmit,
@@ -31,7 +33,7 @@ export function ReferralForm({ organizations }: ReferralFormProps) {
     watch,
     formState: { errors, isSubmitting },
   } = useForm<CreateReferralInput>({
-    resolver: zodResolver(createReferralSchema),
+    resolver,
     defaultValues: {
       priority: "STANDARD",
       channel: "PORTAL",

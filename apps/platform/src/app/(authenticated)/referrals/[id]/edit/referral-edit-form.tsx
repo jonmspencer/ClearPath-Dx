@@ -25,13 +25,15 @@ interface Props {
 
 export function ReferralEditForm({ referral, organizations }: Props) {
   const router = useRouter();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const resolver = zodResolver(updateReferralSchema) as any;
   const {
     register,
     handleSubmit,
     setValue,
     formState: { errors, isSubmitting },
   } = useForm<UpdateReferralInput>({
-    resolver: zodResolver(updateReferralSchema),
+    resolver,
     defaultValues: {
       priority: referral.priority,
       childFirstName: referral.childFirstName,

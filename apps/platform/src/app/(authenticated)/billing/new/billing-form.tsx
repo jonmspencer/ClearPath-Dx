@@ -19,8 +19,10 @@ interface Props {
 
 export function BillingForm({ cases, organizations }: Props) {
   const router = useRouter();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const resolver = zodResolver(createBillingSchema) as any;
   const { register, handleSubmit, setValue, formState: { errors, isSubmitting } } = useForm<CreateBillingInput>({
-    resolver: zodResolver(createBillingSchema),
+    resolver,
   });
 
   async function onSubmit(data: CreateBillingInput) {

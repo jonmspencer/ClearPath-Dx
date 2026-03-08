@@ -13,8 +13,10 @@ import { updateBillingSchema, type UpdateBillingInput } from "@/lib/validations/
 
 export function BillingEditForm({ record }: { record: any }) {
   const router = useRouter();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const resolver = zodResolver(updateBillingSchema) as any;
   const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm<UpdateBillingInput>({
-    resolver: zodResolver(updateBillingSchema),
+    resolver,
     defaultValues: {
       cptCode: record.cptCode ?? "",
       billedAmount: record.billedAmount ? Number(record.billedAmount) : undefined,

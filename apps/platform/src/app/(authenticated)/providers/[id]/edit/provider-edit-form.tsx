@@ -15,8 +15,10 @@ import { updateProviderSchema, type UpdateProviderInput } from "@/lib/validation
 
 export function ProviderEditForm({ provider }: { provider: any }) {
   const router = useRouter();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const resolver = zodResolver(updateProviderSchema) as any;
   const { register, handleSubmit, setValue, watch, formState: { errors, isSubmitting } } = useForm<UpdateProviderInput>({
-    resolver: zodResolver(updateProviderSchema),
+    resolver,
     defaultValues: {
       providerType: provider.providerType,
       licenseNumber: provider.licenseNumber ?? "",

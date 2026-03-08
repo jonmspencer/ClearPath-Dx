@@ -20,8 +20,10 @@ interface Props {
 
 export function ProviderForm({ users, organizations }: Props) {
   const router = useRouter();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const resolver = zodResolver(createProviderSchema) as any;
   const { register, handleSubmit, setValue, watch, formState: { errors, isSubmitting } } = useForm<CreateProviderInput>({
-    resolver: zodResolver(createProviderSchema),
+    resolver,
     defaultValues: {
       specialties: [],
       serviceZipCodes: [],
