@@ -1,0 +1,37 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(pnpm install:*)",
+      "Bash(pnpm add:*)",
+      "Bash(pnpm run *)",
+      "Bash(pnpm --filter *)",
+      "Bash(pnpm exec *)",
+      "Bash(pnpm dev:*)",
+      "Bash(pnpm test:*)",
+      "Bash(pnpm build:*)",
+      "Bash(git status:*)",
+      "Bash(git diff:*)",
+      "Bash(git log:*)",
+      "Bash(git branch:*)",
+      "Bash(git stash:*)",
+      "Bash(ls:*)",
+      "Bash(mkdir:*)",
+      "Bash(node *)",
+      "Bash(npx tsc:*)",
+      "Bash(npx prisma generate:*)",
+      "Bash(npx playwright *)",
+      "Bash(pg_isready:*)",
+      "Bash(lsof:*)",
+      "WebFetch(domain:ui.shadcn.com)"
+    ],
+    "deny": [
+      "Bash(rm -rf /)",
+      "Bash(rm -rf ~)",
+      "Bash(shred:*)"
+    ]
+  },
+  "output": {
+    "style": "explanatory"
+  },
+  "autoCompact": 80
+}
