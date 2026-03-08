@@ -70,7 +70,7 @@ async function getAdminStats() {
   return {
     totalReferrals, pendingReferrals, totalClients, activeCases,
     reportsInReview, pendingBilling, totalProviders, totalOrgs,
-    recentActivity: recentActivity.map((a) => ({
+    recentActivity: recentActivity.map((a: any) => ({
       id: a.id, action: a.action, resource: a.resource,
       resourceId: a.resourceId, actorName: a.actor?.name, createdAt: a.createdAt.toISOString(),
     })),
@@ -98,7 +98,7 @@ async function getFinanceStats() {
   return {
     pendingBilling, submittedBilling, paidBilling, totalBilling,
     pendingPayouts, approvedPayouts,
-    recentActivity: recentActivity.map((a) => ({
+    recentActivity: recentActivity.map((a: any) => ({
       id: a.id, action: a.action, resource: a.resource,
       resourceId: a.resourceId, actorName: a.actor?.name, createdAt: a.createdAt.toISOString(),
     })),
