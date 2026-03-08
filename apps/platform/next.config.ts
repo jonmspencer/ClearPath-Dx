@@ -8,6 +8,7 @@ const nextConfig: NextConfig = {
     "@clearpath/types",
     "@clearpath/rbac",
   ],
+  serverExternalPackages: ["@prisma/client", "prisma"],
 };
 
 export default nextConfig;
