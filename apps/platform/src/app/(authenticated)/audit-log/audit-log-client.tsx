@@ -128,7 +128,7 @@ export function AuditLogClient() {
                   <p className="text-xs truncate">{selectedLog.userAgent || "—"}</p>
                 </div>
               </div>
-              {selectedLog.oldValues && (
+              {selectedLog.oldValues != null && (
                 <div>
                   <h4 className="text-sm font-medium mb-1">Old Values</h4>
                   <ScrollArea className="h-[150px] rounded-md border p-3">
@@ -136,7 +136,7 @@ export function AuditLogClient() {
                   </ScrollArea>
                 </div>
               )}
-              {selectedLog.newValues && (
+              {selectedLog.newValues != null && (
                 <div>
                   <h4 className="text-sm font-medium mb-1">New Values</h4>
                   <ScrollArea className="h-[150px] rounded-md border p-3">
@@ -144,7 +144,7 @@ export function AuditLogClient() {
                   </ScrollArea>
                 </div>
               )}
-              {selectedLog.metadata && (
+              {selectedLog.metadata != null && (
                 <div>
                   <h4 className="text-sm font-medium mb-1">Metadata</h4>
                   <ScrollArea className="h-[150px] rounded-md border p-3">
