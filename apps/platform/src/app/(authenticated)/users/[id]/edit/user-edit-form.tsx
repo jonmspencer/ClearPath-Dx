@@ -14,8 +14,10 @@ import { updateUserSchema, type UpdateUserInput } from "@/lib/validations/user";
 
 export function UserEditForm({ user }: { user: any }) {
   const router = useRouter();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const resolver: any = zodResolver(updateUserSchema);
   const { register, handleSubmit, setValue, watch, formState: { errors, isSubmitting } } = useForm<UpdateUserInput>({
-    resolver: zodResolver(updateUserSchema),
+    resolver,
     defaultValues: {
       email: user.email ?? "",
       name: user.name ?? "",

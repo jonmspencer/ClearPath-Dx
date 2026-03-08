@@ -25,8 +25,10 @@ interface Props {
 
 export function OrgForm({ accountManagers }: Props) {
   const router = useRouter();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const resolver: any = zodResolver(createOrganizationSchema);
   const { register, handleSubmit, setValue, formState: { errors, isSubmitting } } = useForm<CreateOrganizationInput>({
-    resolver: zodResolver(createOrganizationSchema),
+    resolver,
   });
 
   async function onSubmit(data: CreateOrganizationInput) {

@@ -41,13 +41,15 @@ interface Props {
 
 export function InterviewEditForm({ interview, providers }: Props) {
   const router = useRouter();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const resolver: any = zodResolver(updateInterviewSchema);
   const {
     register,
     handleSubmit,
     setValue,
     formState: { errors, isSubmitting },
   } = useForm<UpdateInterviewInput>({
-    resolver: zodResolver(updateInterviewSchema),
+    resolver,
     defaultValues: {
       providerId: interview.providerId,
       interviewType: interview.interviewType,

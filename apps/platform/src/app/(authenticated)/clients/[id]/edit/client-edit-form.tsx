@@ -23,13 +23,15 @@ interface Props {
 
 export function ClientEditForm({ client }: Props) {
   const router = useRouter();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const resolver: any = zodResolver(updateClientSchema);
   const {
     register,
     handleSubmit,
     setValue,
     formState: { errors, isSubmitting },
   } = useForm<UpdateClientInput>({
-    resolver: zodResolver(updateClientSchema),
+    resolver,
     defaultValues: {
       firstName: client.firstName,
       lastName: client.lastName,

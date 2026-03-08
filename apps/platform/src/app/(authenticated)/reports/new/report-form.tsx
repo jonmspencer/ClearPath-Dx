@@ -18,8 +18,10 @@ interface Props {
 
 export function ReportForm({ cases }: Props) {
   const router = useRouter();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const resolver: any = zodResolver(createReportSchema);
   const { register, handleSubmit, setValue, formState: { errors, isSubmitting } } = useForm<CreateReportInput>({
-    resolver: zodResolver(createReportSchema),
+    resolver,
     defaultValues: { diagnoses: [] },
   });
 

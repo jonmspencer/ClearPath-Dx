@@ -27,6 +27,8 @@ interface CaseFormProps {
 
 export function CaseForm({ referrals, clients, users, providers }: CaseFormProps) {
   const router = useRouter();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const resolver: any = zodResolver(createCaseSchema);
   const {
     register,
     handleSubmit,
@@ -34,7 +36,7 @@ export function CaseForm({ referrals, clients, users, providers }: CaseFormProps
     watch,
     formState: { errors, isSubmitting },
   } = useForm<CreateCaseInput>({
-    resolver: zodResolver(createCaseSchema),
+    resolver,
     defaultValues: {
       priority: "STANDARD",
     },

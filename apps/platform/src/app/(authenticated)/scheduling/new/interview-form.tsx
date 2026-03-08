@@ -38,6 +38,8 @@ interface InterviewFormProps {
 
 export function InterviewForm({ cases, providers, defaultCaseId }: InterviewFormProps) {
   const router = useRouter();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const resolver: any = zodResolver(createInterviewSchema);
   const {
     register,
     handleSubmit,
@@ -45,7 +47,7 @@ export function InterviewForm({ cases, providers, defaultCaseId }: InterviewForm
     watch,
     formState: { errors, isSubmitting },
   } = useForm<CreateInterviewInput>({
-    resolver: zodResolver(createInterviewSchema),
+    resolver,
     defaultValues: {
       caseId: defaultCaseId ?? "",
       interviewType: "PARENT_INTERVIEW",

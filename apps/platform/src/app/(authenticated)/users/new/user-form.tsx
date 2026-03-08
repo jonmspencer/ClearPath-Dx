@@ -29,8 +29,10 @@ interface Props {
 
 export function UserForm({ organizations }: Props) {
   const router = useRouter();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const resolver: any = zodResolver(createUserSchema);
   const { register, handleSubmit, setValue, formState: { errors, isSubmitting } } = useForm<CreateUserInput>({
-    resolver: zodResolver(createUserSchema),
+    resolver,
     defaultValues: { isPrimary: true },
   });
 

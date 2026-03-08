@@ -41,8 +41,10 @@ export function UserDetailClient({ user, organizations }: Props) {
   const router = useRouter();
   const [roleDialogOpen, setRoleDialogOpen] = useState(false);
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const resolver: any = zodResolver(assignRoleSchema);
   const { setValue, handleSubmit, formState: { errors, isSubmitting }, reset } = useForm<AssignRoleInput>({
-    resolver: zodResolver(assignRoleSchema),
+    resolver,
   });
 
   async function handleDeactivate() {

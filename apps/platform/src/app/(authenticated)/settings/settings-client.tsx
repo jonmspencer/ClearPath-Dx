@@ -39,8 +39,10 @@ export function SettingsClient() {
 
 function OrganizationSettings() {
   const [isLoadingData, setIsLoadingData] = useState(true);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const orgResolver: any = zodResolver(updateOrgSettingsSchema);
   const { register, handleSubmit, reset, formState: { errors, isSubmitting } } = useForm<UpdateOrgSettingsInput>({
-    resolver: zodResolver(updateOrgSettingsSchema),
+    resolver: orgResolver,
   });
 
   useEffect(() => {
@@ -142,8 +144,10 @@ function ProfileSettings() {
   const { update: updateSession } = useSession();
   const [isLoadingData, setIsLoadingData] = useState(true);
   const [email, setEmail] = useState("");
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const profileResolver: any = zodResolver(updateProfileSchema);
   const { register, handleSubmit, reset, formState: { errors, isSubmitting } } = useForm<UpdateProfileInput>({
-    resolver: zodResolver(updateProfileSchema),
+    resolver: profileResolver,
   });
 
   useEffect(() => {

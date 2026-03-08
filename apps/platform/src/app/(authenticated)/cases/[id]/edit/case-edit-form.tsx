@@ -26,13 +26,15 @@ interface Props {
 
 export function CaseEditForm({ diagnosticCase, users, providers }: Props) {
   const router = useRouter();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const resolver: any = zodResolver(updateCaseSchema);
   const {
     register,
     handleSubmit,
     setValue,
     formState: { errors, isSubmitting },
   } = useForm<UpdateCaseInput>({
-    resolver: zodResolver(updateCaseSchema),
+    resolver,
     defaultValues: {
       priority: diagnosticCase.priority,
       coordinatorId: diagnosticCase.coordinatorId ?? undefined,

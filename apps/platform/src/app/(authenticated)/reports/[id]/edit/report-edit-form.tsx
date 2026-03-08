@@ -12,8 +12,10 @@ import { updateReportSchema, type UpdateReportInput } from "@/lib/validations/re
 
 export function ReportEditForm({ report }: { report: any }) {
   const router = useRouter();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const resolver: any = zodResolver(updateReportSchema);
   const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm<UpdateReportInput>({
-    resolver: zodResolver(updateReportSchema),
+    resolver,
     defaultValues: {
       reportContent: report.reportContent ?? "",
       summary: report.summary ?? "",

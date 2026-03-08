@@ -32,6 +32,8 @@ interface ClientFormProps {
 
 export function ClientForm({ organizations, referrals }: ClientFormProps) {
   const router = useRouter();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const resolver: any = zodResolver(createClientSchema);
   const {
     register,
     handleSubmit,
@@ -40,7 +42,7 @@ export function ClientForm({ organizations, referrals }: ClientFormProps) {
     control,
     formState: { errors, isSubmitting },
   } = useForm<CreateClientInput>({
-    resolver: zodResolver(createClientSchema),
+    resolver,
     defaultValues: {
       guardians: [],
     },
