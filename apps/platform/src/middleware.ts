@@ -1,7 +1,7 @@
-import { auth } from "@clearpath/auth";
+import { edgeAuth } from "@clearpath/auth/edge";
 import { NextResponse } from "next/server";
 
-export default auth((req: any) => {
+export default edgeAuth((req: any) => {
   const isLoggedIn = !!req.auth;
   const { pathname } = req.nextUrl;
 
