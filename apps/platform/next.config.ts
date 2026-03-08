@@ -8,6 +8,7 @@ const nextConfig: NextConfig = {
     "@clearpath/database",
     "@clearpath/types",
     "@clearpath/rbac",
+    "@clearpath/email",
   ],
   outputFileTracingRoot: path.join(__dirname, "../../"),
 };

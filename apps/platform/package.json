@@ -13,6 +13,7 @@
   "dependencies": {
     "@clearpath/auth": "workspace:*",
     "@clearpath/database": "workspace:*",
+    "@clearpath/email": "workspace:*",
     "@clearpath/rbac": "workspace:*",
     "@clearpath/types": "workspace:*",
     "@clearpath/ui": "workspace:*",
