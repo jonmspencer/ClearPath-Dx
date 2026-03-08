@@ -87,7 +87,7 @@ async function main() {
   // ============================================================
   // 2. USERS + ORG MEMBERSHIPS
   // ============================================================
-  const password = hash("password123");
+  const password = hash("p1zz4andfl!ght$");
 
   async function createUserWithRole(
     email: string,
@@ -119,7 +119,10 @@ async function main() {
   }
 
   const superAdmin = await createUserWithRole(
-    "super.admin@clearpathdx.com", "Sarah Chen", "SUPER_ADMIN", clearpath.id
+    "jon@jonspencer.us", "Jon Spencer", "SUPER_ADMIN", clearpath.id
+  );
+  const superAdmin2 = await createUserWithRole(
+    "justin@whisperlabs.com", "Justin Blanchard", "SUPER_ADMIN", clearpath.id
   );
   const financeAdmin = await createUserWithRole(
     "finance@clearpathdx.com", "Marcus Rivera", "FINANCE_ADMIN", clearpath.id
@@ -172,7 +175,7 @@ async function main() {
     { phone: "+1-555-600-0001" }
   );
 
-  console.log("  ✓ 13 users created with org memberships");
+  console.log("  ✓ 14 users created with org memberships");
 
   // ============================================================
   // 3. PROVIDER PROFILES + AVAILABILITY
@@ -1157,8 +1160,9 @@ async function main() {
   console.log("  ✓ 8 audit log entries created");
 
   console.log("\n✅ Seed complete!\n");
-  console.log("Test accounts (password: password123):");
-  console.log("  Super Admin:    super.admin@clearpathdx.com");
+  console.log("Test accounts (password: p1zz4andfl!ght$):");
+  console.log("  Super Admin:    jon@jonspencer.us");
+  console.log("  Super Admin:    justin@whisperlabs.com");
   console.log("  Admin:          admin@clearpathdx.com");
   console.log("  Finance Admin:  finance@clearpathdx.com");
   console.log("  Intake:         intake@clearpathdx.com");

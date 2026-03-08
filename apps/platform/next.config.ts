@@ -9,7 +9,6 @@ const nextConfig: NextConfig = {
     "@clearpath/types",
     "@clearpath/rbac",
   ],
-  serverExternalPackages: ["@prisma/client", "prisma"],
   outputFileTracingRoot: path.join(__dirname, "../../"),
 };
 
