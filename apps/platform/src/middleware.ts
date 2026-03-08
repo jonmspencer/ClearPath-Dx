@@ -28,6 +28,6 @@ export default edgeAuth((req: any) => {
 
 export const config = {
   matcher: [
-    "/((?!api/auth|api/health|_next/static|_next/image|favicon.ico).*)",
+    "/((?!api/auth|api/health|api/webhooks|api/cron|_next/static|_next/image|favicon.ico).*)",
   ],
 };

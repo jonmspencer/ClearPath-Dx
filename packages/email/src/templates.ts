@@ -158,6 +158,30 @@ export function payoutProcessedEmail(data: {
   };
 }
 
+// ─── Parent Outreach ──────────────────────────────────
+
+export function parentOutreachEmail(data: {
+  parentName: string;
+  childName: string;
+  referralNumber: string;
+}): { subject: string; html: string } {
+  return {
+    subject: `ClearPath Diagnostics — Referral Received for ${data.childName}`,
+    html: emailLayout(`
+      <p>Dear ${data.parentName},</p>
+      <p>We've received a referral for <strong>${data.childName}</strong> (Ref: ${data.referralNumber}) for a diagnostic evaluation through ClearPath Diagnostics.</p>
+      <p>Our team will be reaching out to you shortly to gather some information and get the process started. In the meantime, if you have any questions, please don't hesitate to contact us.</p>
+      <p><strong>What to expect next:</strong></p>
+      <ul style="margin:16px 0; padding-left:24px; line-height:1.8;">
+        <li>A care coordinator will contact you to collect some basic information</li>
+        <li>We'll work with your insurance to verify coverage</li>
+        <li>We'll schedule the evaluation at a time and location convenient for you</li>
+      </ul>
+      <p>We look forward to supporting your family through this process.</p>
+    `),
+  };
+}
+
 // ─── Care Coordination ──────────────────────────────────
 
 export function careCoordinationFlagEmail(data: {

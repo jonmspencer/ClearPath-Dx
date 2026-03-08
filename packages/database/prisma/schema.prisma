@@ -120,6 +120,20 @@ enum FlagSeverity {
   CRITICAL
 }
 
+enum OutreachChannel {
+  SMS
+  EMAIL
+  PHONE_CALL
+}
+
+enum OutreachStatus {
+  SENT
+  DELIVERED
+  FAILED
+  RESPONDED
+  NO_RESPONSE
+}
+
 enum DayOfWeek {
   MONDAY
   TUESDAY
@@ -310,6 +324,7 @@ model Referral {
   client         Client?
   diagnosticCase DiagnosticCase?
   statusHistory  ReferralStatusHistory[]
+  outreachLogs   OutreachLog[]
 
   @@index([status])
   @@index([referringOrgId])
@@ -389,6 +404,7 @@ model Guardian {
   client        Client                @relation(fields: [clientId], references: [id], onDelete: Cascade)
   user          User?                 @relation(fields: [userId], references: [id])
   parentSurveys ParentSurveyResponse[]
+  outreachLogs  OutreachLog[]
 
   @@map("guardians")
 }
@@ -709,6 +725,34 @@ model CareCoordinationFlag {
 
   @@index([severity, isResolved])
   @@map("care_coordination_flags")
+}
+
+// ============================================================
+// OUTREACH & AUTOMATION
+// ============================================================
+
+model OutreachLog {
+  id            String          @id @default(cuid())
+  referralId    String          @map("referral_id")
+  guardianId    String?         @map("guardian_id")
+  channel       OutreachChannel
+  status        OutreachStatus  @default(SENT)
+  message       String          @db.Text
+  sentAt        DateTime        @default(now()) @map("sent_at")
+  respondedAt   DateTime?       @map("responded_at")
+  response      String?
+  attemptNumber Int             @default(1) @map("attempt_number")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  referral Referral  @relation(fields: [referralId], references: [id], onDelete: Cascade)
+  guardian Guardian? @relation(fields: [guardianId], references: [id])
+
+  @@index([referralId])
+  @@index([guardianId])
+  @@index([status, sentAt])
+  @@map("outreach_logs")
 }
 
 // ============================================================

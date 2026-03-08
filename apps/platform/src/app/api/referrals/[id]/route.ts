@@ -9,6 +9,7 @@ import {
 } from "@/lib/api-helpers";
 import { createAuditLog } from "@/lib/audit";
 import { updateReferralSchema } from "@/lib/validations/referral";
+import { sendEmail, referralStatusUpdateEmail } from "@clearpath/email";
 
 export async function GET(
   request: NextRequest,
@@ -101,6 +102,27 @@ export async function PATCH(
       oldValues: { status: existing.status },
       newValues: data,
     });
+
+    // Send status update email on status changes
+    if (data.status && data.status !== existing.status) {
+      try {
+        const childName = `${existing.childFirstName} ${existing.childLastName}`;
+        const statusEmail = referralStatusUpdateEmail({
+          referralNumber: existing.referralNumber,
+          childName,
+          newStatus: data.status.replace(/_/g, " "),
+          updatedBy: session.user.name ?? session.user.email ?? "System",
+        });
+        await sendEmail({
+          to: process.env.INTAKE_NOTIFICATION_EMAIL ?? "intake@clearpathdx.com",
+          subject: statusEmail.subject,
+          html: statusEmail.html,
+          tag: "referral-status-update",
+        });
+      } catch (emailError) {
+        console.error("[Email] Status update notification failed:", emailError);
+      }
+    }
 
     return successResponse(referral, "Referral updated successfully");
   } catch (error) {

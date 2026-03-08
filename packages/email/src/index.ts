@@ -8,4 +8,5 @@ export {
   reportReadyEmail,
   payoutProcessedEmail,
   careCoordinationFlagEmail,
+  parentOutreachEmail,
 } from "./templates";

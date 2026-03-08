@@ -21,6 +21,15 @@ export const NAVIGATION_ITEMS: NavItem[] = [
     roles: Object.values(UserRole),
   },
   {
+    label: "My Queue",
+    href: "/coordinator-queue",
+    icon: "ListChecks",
+    group: "Operations",
+    roles: [
+      UserRole.SUPER_ADMIN, UserRole.ADMIN, UserRole.INTAKE_COORDINATOR,
+    ],
+  },
+  {
     label: "Referrals",
     href: "/referrals",
     icon: "FileText",
