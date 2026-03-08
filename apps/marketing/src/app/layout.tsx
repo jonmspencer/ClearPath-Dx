@@ -1,8 +1,12 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Epilogue } from "next/font/google";
 import "./globals.css";
 
-const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
+const epilogue = Epilogue({
+  subsets: ["latin"],
+  variable: "--font-sans",
+  style: ["normal", "italic"],
+});
 
 export const metadata: Metadata = {
   title: "ClearPath Dx — Diagnostics Marketplace",
@@ -17,7 +21,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={`${inter.variable} font-sans antialiased`}>
+      <body className={`${epilogue.variable} font-sans antialiased`}>
         {children}
       </body>
     </html>
