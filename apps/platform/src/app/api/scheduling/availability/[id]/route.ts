@@ -38,7 +38,7 @@ export async function PATCH(
 
     const availability = await prisma.providerAvailability.update({
       where: { id },
-      data,
+      data: data as any,
       include: {
         provider: {
           select: {

@@ -80,7 +80,7 @@ export default async function ParentGuardianDashboardPage() {
           <CardHeader><CardTitle className="text-base">Upcoming Appointments</CardTitle></CardHeader>
           <CardContent>
             <div className="space-y-3">
-              {latestCase.interviews.map((interview) => (
+              {latestCase.interviews.map((interview: any) => (
                 <div key={interview.id} className="flex items-center justify-between text-sm">
                   <span className="font-medium">{interview.interviewType.replace(/_/g, " ")}</span>
                   <span className="text-muted-foreground">{format(new Date(interview.scheduledStart), "MMM d, yyyy 'at' h:mm a")}</span>

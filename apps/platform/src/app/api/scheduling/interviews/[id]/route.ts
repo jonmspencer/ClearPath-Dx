@@ -23,7 +23,7 @@ export async function GET(
     const interview = await prisma.interviewEvent.findUnique({
       where: { id },
       include: {
-        case: {
+        diagnosticCase: {
           select: {
             id: true,
             caseNumber: true,
@@ -75,7 +75,7 @@ export async function PATCH(
       where: { id },
       data: updateData,
       include: {
-        case: {
+        diagnosticCase: {
           select: {
             id: true,
             caseNumber: true,

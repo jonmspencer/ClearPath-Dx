@@ -10,7 +10,7 @@ export const providerRegistrationSchema = z.object({
 
   // Provider details
   providerType: z.enum(["PSYCHOLOGIST", "PSYCHOMETRIST"], {
-    required_error: "Provider type is required",
+    error: "Provider type is required",
   }),
   licenseNumber: z.string().optional(),
   licenseState: z.string().optional(),

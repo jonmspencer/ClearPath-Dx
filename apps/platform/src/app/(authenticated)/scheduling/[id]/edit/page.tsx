@@ -21,7 +21,7 @@ export default async function EditInterviewPage({
   const interview = await prisma.interviewEvent.findUnique({
     where: { id },
     include: {
-      case: { select: { id: true, caseNumber: true } },
+      diagnosticCase: { select: { id: true, caseNumber: true } },
       provider: { select: { id: true, user: { select: { name: true } } } },
     },
   });
@@ -29,7 +29,7 @@ export default async function EditInterviewPage({
   if (!interview) notFound();
 
   const providers = await prisma.providerProfile.findMany({
-    where: { isActive: true },
+    where: { isAcceptingCases: true },
     select: {
       id: true,
       user: { select: { name: true } },

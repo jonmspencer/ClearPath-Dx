@@ -35,7 +35,7 @@ export const updateUserSchema = z.object({
 
 export const assignRoleSchema = z.object({
   organizationId: z.string().min(1, "Organization is required"),
-  role: z.enum(USER_ROLES, { required_error: "Role is required" }),
+  role: z.enum(USER_ROLES, { error: "Role is required" }),
   isPrimary: z.boolean().optional(),
 });
 

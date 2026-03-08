@@ -82,7 +82,7 @@ export async function POST(request: NextRequest) {
     const availability = await prisma.providerAvailability.create({
       data: {
         providerId: effectiveProviderId,
-        dayOfWeek: data.dayOfWeek,
+        dayOfWeek: data.dayOfWeek as any,
         startTime: data.startTime,
         endTime: data.endTime,
         isRecurring: data.isRecurring,

@@ -4,12 +4,11 @@ import { prisma } from "@clearpath/database";
 import { emailProvider } from "./providers/email";
 import { credentialsProvider } from "./providers/credentials";
 import { jwtCallback, sessionCallback } from "./callbacks";
-import type { NextAuthConfig } from "next-auth";
 
-export const authConfig: NextAuthConfig = {
+export const authConfig = {
   adapter: PrismaAdapter(prisma),
   session: {
-    strategy: "jwt",
+    strategy: "jwt" as const,
     maxAge: 8 * 60 * 60, // 8 hours — HIPAA-aligned session timeout
   },
   pages: {
@@ -21,10 +20,10 @@ export const authConfig: NextAuthConfig = {
   callbacks: {
     jwt: jwtCallback,
     session: sessionCallback,
-    authorized({ auth }) {
+    authorized({ auth }: any) {
       return !!auth?.user;
     },
   },
 };
 
-export const { auth, handlers, signIn, signOut } = NextAuth(authConfig);
+export const { auth, handlers, signIn, signOut } = (NextAuth as any)(authConfig);

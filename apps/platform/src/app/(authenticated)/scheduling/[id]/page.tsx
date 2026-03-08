@@ -21,7 +21,7 @@ export default async function InterviewDetailPage({
   const interview = await prisma.interviewEvent.findUnique({
     where: { id },
     include: {
-      case: {
+      diagnosticCase: {
         select: {
           id: true,
           caseNumber: true,
@@ -45,7 +45,7 @@ export default async function InterviewDetailPage({
   return (
     <PageContainer
       title={typeLabel}
-      description={`Case ${interview.case?.caseNumber ?? "Unknown"}`}
+      description={`Case ${interview.diagnosticCase?.caseNumber ?? "Unknown"}`}
     >
       <InterviewDetailClient interview={JSON.parse(JSON.stringify(interview))} />
     </PageContainer>

@@ -17,19 +17,5 @@ export interface SessionUser {
   roles: UserRoleMembership[];
 }
 
-// Auth.js module augmentation
-declare module "next-auth" {
-  interface Session {
-    user: SessionUser;
-  }
-}
-
-declare module "next-auth/jwt" {
-  interface JWT {
-    userId: string;
-    activeRole: UserRole;
-    activeOrganizationId: string;
-    activeOrganizationType: OrganizationType;
-    roles: UserRoleMembership[];
-  }
-}
+// Auth.js module augmentation is handled in apps/platform/src/types/next-auth.d.ts
+// to avoid conflicting declarations across packages.

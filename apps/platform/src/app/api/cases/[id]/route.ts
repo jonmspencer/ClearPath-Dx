@@ -61,7 +61,7 @@ export async function GET(
           },
         },
         report: { select: { id: true, status: true } },
-        billingRecords: { select: { id: true, status: true, amountBilled: true } },
+        billingRecords: { select: { id: true, status: true, billedAmount: true } },
         careFlags: {
           where: { resolvedAt: null },
           select: { id: true, severity: true, description: true },

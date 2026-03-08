@@ -59,7 +59,7 @@ export async function GET(request: NextRequest) {
         take: pageSize,
         orderBy: { scheduledStart: "asc" },
         include: {
-          case: {
+          diagnosticCase: {
             select: {
               id: true,
               caseNumber: true,
@@ -103,7 +103,7 @@ export async function POST(request: NextRequest) {
         notes: data.notes || null,
       },
       include: {
-        case: {
+        diagnosticCase: {
           select: {
             id: true,
             caseNumber: true,

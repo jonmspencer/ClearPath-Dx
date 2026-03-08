@@ -30,7 +30,7 @@ export async function GET(
           select: {
             id: true,
             caseNumber: true,
-            status: true,
+            priority: true,
             createdAt: true,
           },
           orderBy: { createdAt: "desc" },
@@ -38,9 +38,9 @@ export async function GET(
         careFlags: {
           select: {
             id: true,
-            flagType: true,
+            title: true,
             severity: true,
-            status: true,
+            isResolved: true,
             description: true,
             createdAt: true,
           },

@@ -3,7 +3,7 @@ import { z } from "zod";
 export const createProviderSchema = z.object({
   userId: z.string().min(1, "User is required"),
   organizationId: z.string().min(1, "Organization is required"),
-  providerType: z.enum(["PSYCHOLOGIST", "PSYCHOMETRIST"], { required_error: "Provider type is required" }),
+  providerType: z.enum(["PSYCHOLOGIST", "PSYCHOMETRIST"], { error: "Provider type is required" }),
   licenseNumber: z.string().optional(),
   licenseState: z.string().optional(),
   npiNumber: z.string().optional(),
@@ -31,7 +31,7 @@ export const updateProviderSchema = z.object({
 });
 
 export const createAvailabilitySchema = z.object({
-  dayOfWeek: z.enum(["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY", "SUNDAY"], { required_error: "Day of week is required" }),
+  dayOfWeek: z.enum(["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY", "SUNDAY"], { error: "Day of week is required" }),
   startTime: z.string().min(1, "Start time is required"),
   endTime: z.string().min(1, "End time is required"),
   isRecurring: z.boolean().default(true),

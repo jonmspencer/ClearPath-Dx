@@ -1,9 +1,7 @@
 import { prisma } from "@clearpath/database";
-import type { AuditAction } from "@clearpath/types";
-
 interface CreateAuditLogParams {
   actorId: string | null;
-  action: AuditAction;
+  action: string;
   resource: string;
   resourceId?: string | null;
   oldValues?: Record<string, unknown> | null;
@@ -21,9 +19,9 @@ export async function createAuditLog(params: CreateAuditLogParams) {
         action: params.action as any,
         resource: params.resource,
         resourceId: params.resourceId ?? null,
-        oldValues: params.oldValues ?? undefined,
-        newValues: params.newValues ?? undefined,
-        metadata: params.metadata ?? undefined,
+        oldValues: (params.oldValues as any) ?? undefined,
+        newValues: (params.newValues as any) ?? undefined,
+        metadata: (params.metadata as any) ?? undefined,
         ipAddress: params.ipAddress ?? null,
         userAgent: params.userAgent ?? null,
       },

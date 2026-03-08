@@ -12,7 +12,7 @@ export const guardianSchema = z.object({
 export const createClientSchema = z.object({
   firstName: z.string().min(1, "First name is required"),
   lastName: z.string().min(1, "Last name is required"),
-  dateOfBirth: z.coerce.date({ required_error: "Date of birth is required" }),
+  dateOfBirth: z.coerce.date({ error: "Date of birth is required" }),
   gender: z.string().optional(),
   preferredName: z.string().optional(),
   primaryLanguage: z.string().optional(),

@@ -20,7 +20,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
           include: { user: { select: { id: true, name: true, email: true } } },
           orderBy: { isPrimary: "desc" },
         },
-        referralSources: { select: { id: true, name: true, isActive: true } },
+        referralSources: { select: { id: true, label: true, isActive: true } },
         _count: { select: { referrals: true, clients: true, billingRecords: true } },
       },
     });
