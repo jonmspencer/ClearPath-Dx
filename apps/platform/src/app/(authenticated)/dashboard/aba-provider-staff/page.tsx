@@ -8,7 +8,7 @@ import { StatCard } from "@/components/stat-card";
 export default async function AbaProviderStaffDashboardPage() {
   const session = await auth();
   if (!session?.user) redirect("/auth/login");
-  const orgId = session.user.activeOrganizationId;
+  const orgId = (session.user as any).activeOrganizationId;
 
   const [totalReferrals, activeReferrals, completedCases, reportsDelivered] = await Promise.all([
     prisma.referral.count({ where: { referringOrgId: orgId } }),

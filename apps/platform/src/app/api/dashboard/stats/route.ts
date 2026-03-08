@@ -7,7 +7,7 @@ export async function GET() {
   try {
     const session = await getSessionOrThrow();
     const role = session.user.activeRole as UserRole;
-    const orgId = session.user.activeOrganizationId;
+    const orgId = (session.user as any).activeOrganizationId;
     const userId = session.user.id;
 
     const stats = await getStatsForRole(role, orgId, userId);

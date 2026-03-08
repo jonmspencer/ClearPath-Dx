@@ -12,7 +12,7 @@ export async function GET() {
     requirePermission(session, "SETTINGS:READ");
 
     const organization = await prisma.organization.findUnique({
-      where: { id: session.user.activeOrganizationId },
+      where: { id: (session.user as any).activeOrganizationId },
       select: {
         id: true,
         name: true,
@@ -44,12 +44,12 @@ export async function PATCH(request: NextRequest) {
     const data = updateOrgSettingsSchema.parse(body);
 
     const existing = await prisma.organization.findUnique({
-      where: { id: session.user.activeOrganizationId },
+      where: { id: (session.user as any).activeOrganizationId },
       select: { name: true, phone: true, fax: true, email: true, address: true, city: true, state: true, zipCode: true, website: true },
     });
 
     const organization = await prisma.organization.update({
-      where: { id: session.user.activeOrganizationId },
+      where: { id: (session.user as any).activeOrganizationId },
       data,
     });
 
