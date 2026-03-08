@@ -6,7 +6,7 @@ import { ReportListClient } from "./report-list-client";
 export default async function ReportsPage() {
   const session = await auth();
   const canCreate = session?.user
-    ? hasPermission(session.user.activeRole as any, "REPORT:CREATE")
+    ? hasPermission((session.user as any).activeRole as any, "REPORT:CREATE")
     : false;
 
   return (

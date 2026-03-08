@@ -30,7 +30,7 @@ export async function GET(request: NextRequest) {
     }
 
     // Scope to provider's own availability for self-scoped roles
-    if (isSelfScoped(session.user.activeRole as any)) {
+    if (isSelfScoped((session.user as any).activeRole as any)) {
       const providerProfileId = await getProviderProfileId(session.user.id);
       if (providerProfileId) {
         where.providerId = providerProfileId;
@@ -71,7 +71,7 @@ export async function POST(request: NextRequest) {
 
     // Self-scoped providers can only create their own availability
     let effectiveProviderId = data.providerId;
-    if (isSelfScoped(session.user.activeRole as any)) {
+    if (isSelfScoped((session.user as any).activeRole as any)) {
       const providerProfileId = await getProviderProfileId(session.user.id);
       if (!providerProfileId) {
         return NextResponse.json({ success: false, error: "No provider profile found" }, { status: 400 });

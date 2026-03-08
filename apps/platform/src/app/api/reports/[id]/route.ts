@@ -16,7 +16,7 @@ async function verifyReportAccess(
   report: { authorId: string; diagnosticCase?: { psychologistId?: string | null; psychometristId?: string | null } | null },
   session: any
 ): Promise<boolean> {
-  if (!isSelfScoped(session.user.activeRole as any)) return true;
+  if (!isSelfScoped((session.user as any).activeRole as any)) return true;
   const providerProfileId = await getProviderProfileId(session.user.id);
   if (!providerProfileId) return false;
   if (report.authorId === providerProfileId) return true;
@@ -75,7 +75,7 @@ export async function PATCH(
     const existing = await prisma.diagnosticReport.findUnique({ where: { id } });
     if (!existing) throw new ApiError("Report not found", 404);
 
-    if (isSelfScoped(session.user.activeRole as any)) {
+    if (isSelfScoped((session.user as any).activeRole as any)) {
       const providerProfileId = await getProviderProfileId(session.user.id);
       if (!providerProfileId || existing.authorId !== providerProfileId) {
         throw new ApiError("Forbidden", 403);
@@ -128,7 +128,7 @@ export async function DELETE(
     const existing = await prisma.diagnosticReport.findUnique({ where: { id } });
     if (!existing) throw new ApiError("Report not found", 404);
 
-    if (isSelfScoped(session.user.activeRole as any)) {
+    if (isSelfScoped((session.user as any).activeRole as any)) {
       const providerProfileId = await getProviderProfileId(session.user.id);
       if (!providerProfileId || existing.authorId !== providerProfileId) {
         throw new ApiError("Forbidden", 403);

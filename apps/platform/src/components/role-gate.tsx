@@ -21,7 +21,7 @@ export function RoleGate({
 
   if (!session) return fallback;
 
-  const role = session.user.activeRole;
+  const role = (session.user as any).activeRole;
 
   if (allowedRoles && !hasRole(role, allowedRoles)) {
     return fallback;

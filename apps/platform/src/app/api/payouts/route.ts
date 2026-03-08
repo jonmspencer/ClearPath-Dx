@@ -22,7 +22,7 @@ export async function GET(request: NextRequest) {
     if (status) where.status = status;
 
     // Self-scoped providers can only see their own payouts
-    if (isSelfScoped(session.user.activeRole as any)) {
+    if (isSelfScoped((session.user as any).activeRole as any)) {
       const providerProfileId = await getProviderProfileId(session.user.id);
       if (providerProfileId) {
         where.providerId = providerProfileId;

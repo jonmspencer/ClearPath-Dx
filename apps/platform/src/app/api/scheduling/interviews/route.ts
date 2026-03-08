@@ -45,7 +45,7 @@ export async function GET(request: NextRequest) {
     }
 
     // Scope to provider's own interviews for self-scoped roles
-    if (isSelfScoped(session.user.activeRole as any)) {
+    if (isSelfScoped((session.user as any).activeRole as any)) {
       const providerProfileId = await getProviderProfileId(session.user.id);
       if (providerProfileId) {
         where.providerId = providerProfileId;

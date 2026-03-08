@@ -29,7 +29,7 @@ export async function PATCH(
     }
 
     // Self-scoped providers can only update their own availability
-    if (isSelfScoped(session.user.activeRole as any)) {
+    if (isSelfScoped((session.user as any).activeRole as any)) {
       const providerProfileId = await getProviderProfileId(session.user.id);
       if (!providerProfileId || existing.providerId !== providerProfileId) {
         throw new ApiError("Forbidden", 403);
@@ -84,7 +84,7 @@ export async function DELETE(
     }
 
     // Self-scoped providers can only delete their own availability
-    if (isSelfScoped(session.user.activeRole as any)) {
+    if (isSelfScoped((session.user as any).activeRole as any)) {
       const providerProfileId = await getProviderProfileId(session.user.id);
       if (!providerProfileId || existing.providerId !== providerProfileId) {
         throw new ApiError("Forbidden", 403);

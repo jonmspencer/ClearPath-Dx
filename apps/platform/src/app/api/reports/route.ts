@@ -34,7 +34,7 @@ export async function GET(request: NextRequest) {
 
     // Scope reports for self-scoped roles (providers): only their authored reports
     // or reports belonging to cases assigned to them
-    if (isSelfScoped(session.user.activeRole as any)) {
+    if (isSelfScoped((session.user as any).activeRole as any)) {
       const providerProfileId = await getProviderProfileId(session.user.id);
       if (providerProfileId) {
         where.AND = [

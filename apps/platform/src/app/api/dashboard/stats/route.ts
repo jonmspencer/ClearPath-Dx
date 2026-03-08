@@ -6,7 +6,7 @@ import type { UserRole } from "@clearpath/types";
 export async function GET() {
   try {
     const session = await getSessionOrThrow();
-    const role = session.user.activeRole as UserRole;
+    const role = (session.user as any).activeRole as UserRole;
     const orgId = (session.user as any).activeOrganizationId;
     const userId = session.user.id;
 

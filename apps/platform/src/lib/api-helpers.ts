@@ -18,7 +18,7 @@ export function requirePermission(
   if (!session?.user) {
     throw new ApiError("Unauthorized", 401);
   }
-  if (!hasPermission(session.user.activeRole as any, permission)) {
+  if (!hasPermission((session.user as any).activeRole as any, permission)) {
     throw new ApiError("Forbidden", 403);
   }
 }
