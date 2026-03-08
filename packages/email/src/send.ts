@@ -10,7 +10,7 @@ interface SendEmailOptions {
 }
 
 export async function sendEmail(options: SendEmailOptions) {
-  const client = getPostmarkClient();
+  const client = await getPostmarkClient();
 
   const result = await client.sendEmail({
     From: FROM_EMAIL,
