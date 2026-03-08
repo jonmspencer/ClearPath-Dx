@@ -123,7 +123,7 @@ async function getIntakeStats() {
 
   return {
     receivedReferrals, intakeInProgress, parentContacted, readyToSchedule, totalClients,
-    recentReferrals: recentReferrals.map((r) => ({
+    recentReferrals: recentReferrals.map((r: any) => ({
       id: r.id, referralNumber: r.referralNumber,
       childName: `${r.childFirstName} ${r.childLastName}`,
       status: r.status, createdAt: r.createdAt.toISOString(),
@@ -156,7 +156,7 @@ async function getSchedulerStats() {
 
   return {
     readyToSchedule, upcomingInterviews, todayInterviews, completedInterviews, availableProviders,
-    recentInterviews: recentInterviews.map((i) => ({
+    recentInterviews: recentInterviews.map((i: any) => ({
       id: i.id, caseNumber: i.diagnosticCase.caseNumber,
       clientName: `${i.diagnosticCase.client.firstName} ${i.diagnosticCase.client.lastName}`,
       type: i.interviewType, scheduledStart: i.scheduledStart.toISOString(),
