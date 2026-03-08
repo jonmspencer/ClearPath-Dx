@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation";
 import {
   LayoutDashboard, FileText, Users, Calendar, ClipboardCheck,
   DollarSign, Activity, Building2, UserCog, Shield, Settings,
-  Briefcase, ChevronDown,
+  Briefcase, ChevronDown, ListChecks, Wallet,
 } from "lucide-react";
 import { cn } from "@clearpath/ui/lib/utils";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@clearpath/ui/components/tooltip";
@@ -16,6 +16,7 @@ import type { UserRole } from "@clearpath/types";
 const ICON_MAP: Record<string, React.ComponentType<{ className?: string }>> = {
   LayoutDashboard, FileText, Users, Calendar, ClipboardCheck,
   DollarSign, Activity, Building2, UserCog, Shield, Settings, Briefcase,
+  ListChecks, Wallet,
 };
 
 interface SidebarNavProps {
