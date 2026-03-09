@@ -1,11 +1,12 @@
 import type { Metadata } from "next";
-import { Epilogue } from "next/font/google";
+import { DM_Sans } from "next/font/google";
 import "./globals.css";
 
-const epilogue = Epilogue({
+const dmSans = DM_Sans({
   subsets: ["latin"],
   variable: "--font-sans",
   style: ["normal", "italic"],
+  axes: ["opsz"],
 });
 
 export const metadata: Metadata = {
@@ -21,7 +22,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={`${epilogue.variable} font-sans antialiased`}>
+      <body className={`${dmSans.variable} font-sans antialiased`}>
         {children}
       </body>
     </html>
